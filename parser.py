@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 # constants
 HITMAP_RESOLUTION = 128
 HITMAP_SIZE = 128
+TIMING_RESOLUTION = 64
 
 class HitObject:
     x = -1
@@ -81,7 +82,7 @@ def get_difficulty(fp):
 
 
 # get the timing window for a note with the given OD and mods
-def timing_window(od, hd, ez, dt):
+def timing_window(od, hd, ez):
     mod_od = od
     if ez:
         mod_od = 0.5 * od
@@ -91,11 +92,6 @@ def timing_window(od, hd, ez, dt):
     w300 = 79.5 - 6.0 * mod_od
     w100 = 139.5 - 8.0 * mod_od
     w50 = 199.5 - 10.0 * mod_od
-
-    if dt:
-        w300 *= (2.0 / 3.0)
-        w100 *= (2.0 / 3.0)
-        w50 *= (2.0 / 3.0)
 
     return (w300, w100, w50)
 
@@ -151,8 +147,7 @@ Simulates the game, collecting statistics on the way.
 """
 def simulate(objects, difficulty, replay):
     mods = replay['mods']
-    WINDOW = timing_window(difficulty['od'], mods['hard_rock'], 
-        mods['easy'], mods['double_time'] or mods['nightcore'])
+    WINDOW = timing_window(difficulty['od'], mods['hard_rock'], mods['easy'])
     RADIUS = circle_radius(difficulty['cs'], mods['hard_rock'], mods['easy'])
     replay_data = replay['replay_data']
     end_time = max([objects[-1].time, replay_data[-1]['time']])
@@ -168,6 +163,7 @@ def simulate(objects, difficulty, replay):
     # stats variables
     stats = Counter()
     hitmap = np.zeros((HITMAP_RESOLUTION, HITMAP_RESOLUTION))
+    timings = np.zeros(TIMING_RESOLUTION)
 
     for time in range(end_time):
         # check if input advances
@@ -188,10 +184,14 @@ def simulate(objects, difficulty, replay):
                         score_val = score_hit(time, cur_obj, WINDOW)
                         stats[score_val] += 1
                         
-                        # get the x and y coords relative to the center
+                        # get the x and y hitmap coords
                         xi, yi = transform_coords(cur_input, prev_obj, cur_obj)
-
                         hitmap[yi][xi] += 1
+
+                        # get the timing bucket
+                        bucket = int((time - cur_obj.time) / (WINDOW[2] * 2) * \
+                            TIMING_RESOLUTION) + TIMING_RESOLUTION / 2
+                        timings[bucket] += 1
 
 
                         prev_obj = cur_obj
@@ -222,26 +222,31 @@ def simulate(objects, difficulty, replay):
     print('replay 100: ' + str(replay['100']))
     print('replay 50: ' + str(replay['50']))
 
-    return (stats, hitmap)
+    return (stats, hitmap, timings)
 
 
 if __name__ == '__main__':
     # bm_file = 'data/granat.osu'
     # rp_file = 'data/granat_extra.osr'
 
-    bm_file = 'data/junshin_always.osu'
-    rp_file = 'data/junshin_always_colorful.osr'
+    # bm_file = 'data/junshin_always.osu'
+    # rp_file = 'data/junshin_always_colorful.osr'
+
+    bm_file = 'data/darling_insane.osu'
+    rp_file = 'data/darling_insane.osr'
 
     objects = get_objects(bm_file)
     difficulty = get_difficulty(bm_file)
     replay_file = open(rp_file, 'rb').read()
     replay = parseReplay(replay_file)
-    stats, hitmap = simulate(objects, difficulty, replay)
+
+    stats, hitmap, timings = simulate(objects, difficulty, replay)
+
+    print(timings)
 
     res = len(hitmap)
     mods = replay['mods']
     csr = circle_radius(difficulty['cs'], mods['hard_rock'], mods['easy'])
-    print(csr)
 
     fig, axis = plt.subplots()
     heatmap = axis.pcolor(hitmap, cmap=plt.cm.viridis, alpha=1.0)
