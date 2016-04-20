@@ -23,9 +23,23 @@ class HitObject:
         self.y = y
         self.time = time
         self.lenient = lenient
+        self.tags = []
+
+    def add_tag(self, tag):
+        if tag not in self.tags:
+            self.tags.append(tag)
 
     def __str__(self):
-        return '(%d, %d, %d)' % (self.x, self.y, self.time)
+        return '(%d, %d, %d, %s)' % \
+            (self.time, self.x, self.y, self.tags)
+
+class TimingPoint:
+    time = -1
+    mpb = -1
+
+    def __init__(self, time, mpb):
+        self.time = time
+        self.mpb = mpb
 
 def parse_object(line):
     params = line.split(',')
@@ -46,6 +60,29 @@ def parse_object(line):
     else:
         return None
 
+def get_timing_points(fp):
+    osu = open(fp)
+    points = []
+    parsing = False
+    for line in osu:
+        # skip lines until we hit the hitobjects
+        if '[TimingPoints]' in line:
+            parsing = True
+        elif not parsing:
+            continue
+        elif parsing:
+            if line.strip() == '':
+                return points
+
+            args = line.split(',')
+            time = int(args[0])
+            mpb = float(args[1])
+            if mpb > 0:
+                pt = TimingPoint(time, mpb)
+                points.append(pt)
+
+    return points
+
 """
 Takes a beatmap file as input, and outputs a list of
 beatmap objects, sorted by their time offset.
@@ -65,7 +102,28 @@ def get_objects(fp):
             if obj != None:
                 objects.append(obj)
 
+    timing_points = get_timing_points(fp)
+
+    # find streams
+    for i in range(len(objects) - 1):
+        obj0 = objects[i]
+        obj1 = objects[i+1]
+        # get current mpb
+        mpb = -1
+        for t in timing_points:
+            mpb = t.mpb
+            if obj0.time >= t.time:
+                break
+
+        timing_diff = obj1.time - obj0.time
+        # print(str(timing_diff) + ' ' + str(mpb/4 + 10))
+
+        if timing_diff < mpb/4.0 + 10.0:
+            obj0.add_tag('stream')
+            obj1.add_tag('stream')
+
     return objects
+
 
 def get_difficulty(fp):
     osu = open(fp)
@@ -165,6 +223,10 @@ def simulate(objects, difficulty, replay):
     hitmap = np.zeros((HITMAP_RESOLUTION, HITMAP_RESOLUTION))
     timings = np.zeros(TIMING_RESOLUTION)
 
+    stream_num = 0
+    stream_timings = []
+
+
     for time in range(end_time):
         # check if input advances
         if len(inputs) > 0:
@@ -189,10 +251,19 @@ def simulate(objects, difficulty, replay):
                         hitmap[yi][xi] += 1
 
                         # get the timing bucket
-                        bucket = int((time - cur_obj.time) / (WINDOW[2] * 2) * \
-                            TIMING_RESOLUTION) + TIMING_RESOLUTION / 2
+                        time_diff = time - cur_obj.time
+                        bucket = int(time_diff / (WINDOW[2] * 2) * \
+                            TIMING_RESOLUTION) + int(TIMING_RESOLUTION / 2)
                         timings[bucket] += 1
 
+                        # if it's a stream, record the timing
+                        if 'stream' in cur_obj.tags:
+                            if stream_num >= len(stream_timings):
+                                stream_timings.append([])
+                            stream_timings[stream_num].append(time_diff)
+                            stream_num += 1
+                        else:
+                            stream_num = 0
 
                         prev_obj = cur_obj
                         cur_obj = None
@@ -214,6 +285,11 @@ def simulate(objects, difficulty, replay):
                 cur_obj = objects.popleft()
 
     # done parsing!
+
+    # get streaming averages
+    stream_avg = [sum(l) / len(l) for l in stream_timings]
+    print([len(l) for l in stream_timings])
+
     replay_hits = replay['300'] + replay['100'] + replay['50']
     replay_misses = replay['miss']
     print('replay hits: ' + str(replay_hits))
@@ -222,7 +298,7 @@ def simulate(objects, difficulty, replay):
     print('replay 100: ' + str(replay['100']))
     print('replay 50: ' + str(replay['50']))
 
-    return (stats, hitmap, timings)
+    return (stats, hitmap, stream_avg, timings)
 
 
 if __name__ == '__main__':
@@ -238,11 +314,13 @@ if __name__ == '__main__':
     objects = get_objects(bm_file)
     difficulty = get_difficulty(bm_file)
     replay_file = open(rp_file, 'rb').read()
+
     replay = parseReplay(replay_file)
 
-    stats, hitmap, timings = simulate(objects, difficulty, replay)
+    stats, hitmap, stream_avg, timings = simulate(objects, difficulty, replay)
 
     print(timings)
+    print(stream_avg)
 
     res = len(hitmap)
     mods = replay['mods']
