@@ -1,1 +1,5 @@
 *.pyc
+data/*
+node_modules/*
+uploads/*
+apikey

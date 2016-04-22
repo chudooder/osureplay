@@ -1,0 +1,66 @@
+/replay
+    GET 
+    - Params
+    h = replay hash
+
+    - Returns
+    json containing the parsed replay information.
+
+    {
+        "replay_md5": "asdf1234"        // hash of the replay
+        "beatmap_md5": "qwer5678"       // hash of the beatmap the replay played on
+        "player": "osumaster3000"       // name of player who created replay
+        "mode": 0                       // mode the replay was played on
+        "num_300": 300                  // number of 300s
+        "num_100": 100                  // number of 100s
+        "num_50": 50                    // number of 50s
+        "num_geki": 300                 // number of gekis
+        "num_katu": 100                 // number of katus
+        "num_miss": 2                   // number of misses
+        "score": 123456789              // total score at the end of the replay
+        "max_combo": 256                // maximum combo achieved
+        "perfect_combo": true           // boolean perfect combo achieved
+        "mods": {                       // map of mods to boolean values
+            "no_fail": True
+            "easy": False
+            ...
+            "key2": False
+        }
+
+        "time_stamp": 100203405         // UNIX timestamp of replay creation
+
+        "timeline": [                   // ordered array of significant events
+            {
+                "t": 3050,              // t = time in the replay
+                "event": "300",         // event = {"100", "50", "miss"}
+                "timing": -15.6         // timing = if 100 or 50, timing diff. in ms
+            }
+            ...
+        ]
+
+        "keys": {                       // map of keys to times pressed
+            "K1": 240
+            "K2": 100
+            "M1": 0
+            "M2": 0
+        }
+
+        "hitmap_resolution": 64         // number of entries in the hitmap resolution
+        "hitmap_size": 128              // size of the hitmap in osupixels
+        "circle_size": 80               // size of the circle in osupixels
+
+        "hitmap": [                     // 1d array of integers representing
+            0, 0, 1, ... , 0,           // heatmap of circle hits
+            0, 1, 4, ... , 0,
+            ...
+            0, 0, 1, ... , 0,
+        ]
+
+        "timings": [                    // array of timing buckets containing # hits
+            0, 0, 1, 4, ... , 2, 1, 0
+        ]
+
+        "stream_timings": [             // array of avg stream timing f.e. index
+            -11.2, -10.4, -5.3, -2.3, -1.1
+        ]
+    }

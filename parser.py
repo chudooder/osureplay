@@ -4,11 +4,15 @@ from collections import Counter, deque
 
 import numpy as np
 import math
+import json
+import urllib.request
+import sys
+import os
 
-import matplotlib.pyplot as plt
+from copy import deepcopy
 
 # constants
-HITMAP_RESOLUTION = 128
+HITMAP_RESOLUTION = 64
 HITMAP_SIZE = 128
 TIMING_RESOLUTION = 64
 
@@ -58,51 +62,47 @@ def parse_object(line):
 
     # ignore spinners
     else:
-        return None
+        return None     
 
-def get_timing_points(fp):
-    osu = open(fp)
-    points = []
-    parsing = False
+"""
+Takes a beatmap file as input, and outputs a list of
+beatmap objects, sorted by their time offset.
+"""
+def parse_osu(osu):
+    objects = []
+    timing_points = []
+    difficulty = {}
+    in_objects = False
+    in_timings = False
+    # parse the osu! file
     for line in osu:
-        # skip lines until we hit the hitobjects
-        if '[TimingPoints]' in line:
-            parsing = True
-        elif not parsing:
-            continue
-        elif parsing:
+        if 'CircleSize' in line:
+            cs = float(line.split(':')[1])
+            difficulty['cs'] = cs
+        elif 'OverallDifficulty' in line:
+            od = float(line.split(':')[1])
+            difficulty['od'] = od
+
+        elif '[TimingPoints]' in line:
+            in_timings = True
+        elif in_timings:
             if line.strip() == '':
-                return points
+                in_timings = False
+                continue
 
             args = line.split(',')
             time = int(args[0])
             mpb = float(args[1])
             if mpb > 0:
                 pt = TimingPoint(time, mpb)
-                points.append(pt)
+                timing_points.append(pt)
 
-    return points
-
-"""
-Takes a beatmap file as input, and outputs a list of
-beatmap objects, sorted by their time offset.
-"""
-def get_objects(fp):
-    osu = open(fp)
-    objects = []
-    parsing = False
-    for line in osu:
-        # skip lines until we hit the hitobjects
         if '[HitObjects]' in line:
-            parsing = True
-        elif not parsing:
-            continue
-        elif parsing:
+            in_objects = True
+        elif in_objects:
             obj = parse_object(line)
             if obj != None:
                 objects.append(obj)
-
-    timing_points = get_timing_points(fp)
 
     # find streams
     for i in range(len(objects) - 1):
@@ -122,21 +122,7 @@ def get_objects(fp):
             obj0.add_tag('stream')
             obj1.add_tag('stream')
 
-    return objects
-
-
-def get_difficulty(fp):
-    osu = open(fp)
-    difficulty = {}
-    for line in osu:
-        if 'CircleSize' in line:
-            cs = float(line.split(':')[1])
-            difficulty['cs'] = cs
-        elif 'OverallDifficulty' in line:
-            od = float(line.split(':')[1])
-            difficulty['od'] = od
-
-    return difficulty
+    return (objects, difficulty)
 
 
 # get the timing window for a note with the given OD and mods
@@ -219,7 +205,8 @@ def simulate(objects, difficulty, replay):
     cur_obj = None
 
     # stats variables
-    stats = Counter()
+    timeline = []
+    keys = {'M1': 0, 'M2': 0, 'K1': 0, 'K2': 0}
     hitmap = np.zeros((HITMAP_RESOLUTION, HITMAP_RESOLUTION))
     timings = np.zeros(TIMING_RESOLUTION)
 
@@ -236,22 +223,32 @@ def simulate(objects, difficulty, replay):
                 cur_input = inputs.popleft()
 
                 # check if player pushed a button
-                if True in [cur_input['keys'][k] and not prev_input['keys'][k] \
-                    for k in ['M1', 'M2', 'K1', 'K2']]:
+                if True in [cur_input['keys'][k] and \
+                    not prev_input['keys'][k] for k in ['M1', 'M2', 'K1', 'K2']]:
+
+                    # add the pressed key to stats
+                    for kk in ['M1', 'M2', 'K1', 'K2']:
+                        if cur_input['keys'][kk]:
+                            keys[kk] += 1
 
                     # check if player hit current hitobject
                     if cur_obj != None and dist(cur_input, cur_obj) < RADIUS:
                         # it's a hit!
-                        stats['hits'] += 1
                         score_val = score_hit(time, cur_obj, WINDOW)
-                        stats[score_val] += 1
-                        
+                        time_diff = time - cur_obj.time
+                        # if the scoreval is 100 or 50, add it to the timeline
+                        if score_val == '100' or score_val == '50':
+                            timeline.append({           \
+                                    't': time,          \
+                                    'event': score_val, \
+                                    'timing': time_diff \
+                                })
                         # get the x and y hitmap coords
                         xi, yi = transform_coords(cur_input, prev_obj, cur_obj)
                         hitmap[yi][xi] += 1
 
                         # get the timing bucket
-                        time_diff = time - cur_obj.time
+                        
                         bucket = int(time_diff / (WINDOW[2] * 2) * \
                             TIMING_RESOLUTION) + int(TIMING_RESOLUTION / 2)
                         timings[bucket] += 1
@@ -270,7 +267,7 @@ def simulate(objects, difficulty, replay):
                         
                     else:
                         # wasted a click
-                        stats['extra_clicks'] += 1
+                        pass
 
         # hit object expires
         if cur_obj != None and time > cur_obj.time + WINDOW[2]:
@@ -284,44 +281,25 @@ def simulate(objects, difficulty, replay):
             if cur_obj == None and in_window(next_obj, time, WINDOW):
                 cur_obj = objects.popleft()
 
-    # done parsing!
-
+    # done parsing! now to format the json
     # get streaming averages
     stream_avg = [sum(l) / len(l) for l in stream_timings]
-    print([len(l) for l in stream_timings])
 
-    replay_hits = replay['300'] + replay['100'] + replay['50']
-    replay_misses = replay['miss']
-    print('replay hits: ' + str(replay_hits))
-    print('replay misses: ' + str(replay_misses)) 
-    print('replay 300: ' + str(replay['300']))
-    print('replay 100: ' + str(replay['100']))
-    print('replay 50: ' + str(replay['50']))
+    result = deepcopy(replay)
+    result.pop('replay_data')
+    result['timeline'] = timeline
+    result['keys'] = dict(keys)
+    result['hitmap'] = np.ravel(hitmap).tolist()
+    result['hitmap_resolution'] = HITMAP_RESOLUTION
+    result['hitmap_size'] = HITMAP_SIZE
+    result['circle_size'] = RADIUS
+    result['timings'] = timings.tolist()
+    result['stream_timings'] = stream_avg
+    return result
 
-    return (stats, hitmap, stream_avg, timings)
 
-
-if __name__ == '__main__':
-    # bm_file = 'data/granat.osu'
-    # rp_file = 'data/granat_extra.osr'
-
-    # bm_file = 'data/junshin_always.osu'
-    # rp_file = 'data/junshin_always_colorful.osr'
-
-    bm_file = 'data/darling_insane.osu'
-    rp_file = 'data/darling_insane.osr'
-
-    objects = get_objects(bm_file)
-    difficulty = get_difficulty(bm_file)
-    replay_file = open(rp_file, 'rb').read()
-
-    replay = parseReplay(replay_file)
-
-    stats, hitmap, stream_avg, timings = simulate(objects, difficulty, replay)
-
-    print(timings)
-    print(stream_avg)
-
+def plot_hitmap(hitmap):
+    import matplotlib.pyplot as plt
     res = len(hitmap)
     mods = replay['mods']
     csr = circle_radius(difficulty['cs'], mods['hard_rock'], mods['easy'])
@@ -336,3 +314,56 @@ if __name__ == '__main__':
     plt.xlim(0, res)
     plt.ylim(0, res)
     plt.show();
+
+def get_beatmap_id(bm_hash):
+    # api call to find the beatmap id
+    apiurl = 'https://osu.ppy.sh/api/get_beatmaps?'
+    key = open('apikey').read().strip()
+    url = apiurl + 'k=' + key + '&h=' + bm_hash
+
+    response = urllib.request.urlopen(url)
+    res = str(response.read(), 'utf-8')
+    jsonRes = json.loads(res)
+
+    if len(jsonRes) == 0:
+        return None
+
+    return jsonRes[0]['beatmap_id']
+
+if __name__ == '__main__':
+    # bm_file = 'data/granat.osu'
+    # rp_file = 'data/granat_extra.osr'
+
+    # bm_file = 'data/junshin_always.osu'
+    # rp_file = 'data/junshin_always_colorful.osr'
+
+    # bm_file = 'data/darling_insane.osu'
+    # rp_file = 'data/darling_insane.osr'
+
+    rp_file = sys.argv[1]
+    replay = parseReplay(open(rp_file, 'rb').read())
+
+    # attempt to locate beatmap file in /data
+    bm_hash = replay['beatmap_md5']
+    bm_path = 'data/' + bm_hash + '.osu'
+    bm_file = None
+
+    if os.path.isfile(bm_path):
+        bm_file = open(bm_path)
+    else:
+        bm_id = get_beatmap_id(bm_hash)
+        # download the beatmap file to the local file system
+        if bm_id != None:
+            urllib.request.urlretrieve('https://osu.ppy.sh/osu/' + bm_id, bm_path)
+            bm_file = open(bm_path)
+
+    if bm_file == None:
+        print(json.dumps({'error': 'Invalid beatmap hash: beatmap not found'}))
+
+    replay_file = open(rp_file, 'rb').read()
+
+    objects, difficulty = parse_osu(bm_file)
+    results = simulate(objects, difficulty, replay)
+    print(json.dumps(results))
+
+    # plot_hitmap(np.reshape(results['hitmap'], (HITMAP_RESOLUTION, HITMAP_RESOLUTION))

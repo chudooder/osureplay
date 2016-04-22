@@ -1,0 +1,31 @@
+{
+  "name": "osureplay",
+  "version": "0.0.0",
+  "description": "osu! replay parser",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "express": "4.13.3",
+    "multer": "1.1.0",
+    "mongoose": "4.4.13",
+    "path": "0.12.7",
+    "python-shell": "0.4.0",
+    "morgan": "1.7.0",
+    "bunyan": "1.8.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chudooder/osureplay.git"
+  },
+  "author": "Shawn Wu",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/chudooder/osureplay/issues"
+  }
+}
