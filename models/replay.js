@@ -8,6 +8,18 @@ var TimelineEventSchema = new mongoose.Schema({
     timing: Number
 });
 
+var BeatmapSchema = new mongoose.Schema({
+    beatmap_md5: String,
+    beatmap_id: Number,
+    name: String,
+    artist: String,
+    creator: String,
+    od: Number,
+    cs: Number,
+    ar: Number,
+    hp: Number
+});
+
 var ReplaySchema = new mongoose.Schema({
     replay_md5: {
         type: String,
@@ -15,8 +27,14 @@ var ReplaySchema = new mongoose.Schema({
         unique: true,
         index: true
     },
-    beatmap_md5: String,
-    player: String,
+    beatmap: {
+        type: BeatmapSchema,
+        index: true
+    },
+    player: {
+        type: String,
+        index: true
+    },
     mode: Number,
     num_300: Number,
     num_100: Number,
@@ -106,11 +124,20 @@ ReplaySchema.statics.parseReplay = function(pathToFile, cb) {
     return res;
 };
 
+ReplaySchema.statics.summary = function(replay) {
+    var fields = ['replay_md5', 'beatmap', 'player', 'mode',
+        'num_300', 'num_100', 'num_50', 'num_geki', 'num_katu',
+        'num_miss', 'score', 'max_combo', 'mods', 'time_stamp'];
+    var summary = {}
+    for(var i in fields) {
+        var field = fields[i];
+        summary[field] = replay[field];
+    }
+    return summary;
+}
 
-var TimelineEvent = mongoose.model('TimelineEvent', TimelineEventSchema);
 var Replay = mongoose.model('Replay', ReplaySchema);
 
 module.exports = {
-    TimelineEvent: TimelineEvent,
     Replay: Replay
 };

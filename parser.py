@@ -71,17 +71,27 @@ beatmap objects, sorted by their time offset.
 def parse_osu(osu):
     objects = []
     timing_points = []
-    difficulty = {}
+    beatmap = {}
     in_objects = False
     in_timings = False
     # parse the osu! file
     for line in osu:
         if 'CircleSize' in line:
-            cs = float(line.split(':')[1])
-            difficulty['cs'] = cs
+            beatmap['cs'] = float(line.split(':')[1])
         elif 'OverallDifficulty' in line:
-            od = float(line.split(':')[1])
-            difficulty['od'] = od
+            beatmap['od'] = float(line.split(':')[1])
+        elif 'HPDrainRate' in line:
+            beatmap['hp'] = float(line.split(':')[1])
+        elif 'ApproachRate' in line:
+            beatmap['ar'] = float(line.split(':')[1])
+        elif 'Title' in line:
+            beatmap['title'] = line.split(':')[1].strip()
+        elif 'Artist' in line and 'Unicode' not in line:
+            beatmap['artist'] = line.split(':')[1].strip()
+        elif 'Creator' in line and 'Unicode' not in line:
+            beatmap['creator'] = line.split(':')[1].strip()
+        elif 'BeatmapID' in line:
+            beatmap['beatmap_id'] = line.split(':')[1].strip()
 
         elif '[TimingPoints]' in line:
             in_timings = True
@@ -122,7 +132,7 @@ def parse_osu(osu):
             obj0.add_tag('stream')
             obj1.add_tag('stream')
 
-    return (objects, difficulty)
+    return (objects, beatmap)
 
 
 # get the timing window for a note with the given OD and mods
@@ -295,6 +305,10 @@ def simulate(objects, difficulty, replay):
     result['circle_size'] = RADIUS
     result['timings'] = timings.tolist()
     result['stream_timings'] = stream_avg
+
+    difficulty['beatmap_md5'] = replay['beatmap_md5']
+    result['beatmap'] = difficulty
+
     return result
 
 
@@ -362,8 +376,8 @@ if __name__ == '__main__':
 
     replay_file = open(rp_file, 'rb').read()
 
-    objects, difficulty = parse_osu(bm_file)
-    results = simulate(objects, difficulty, replay)
+    objects, beatmap = parse_osu(bm_file)
+    results = simulate(objects, beatmap, replay)
     print(json.dumps(results))
 
     # plot_hitmap(np.reshape(results['hitmap'], (HITMAP_RESOLUTION, HITMAP_RESOLUTION))

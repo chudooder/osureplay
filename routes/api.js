@@ -43,7 +43,13 @@ module.exports = function(app) {
         name = req.params.name;
         Replay.find({'player': name}, function(err, playerReplays){
             if(err){ return next(err); }
-            res.json(playerReplays);
+
+            summaries = []
+            for(var i in playerReplays) {
+                var replay = playerReplays[i];
+                summaries.push(Replay.summary(replay));
+            }
+            res.json(summaries);
         })
     });
 
