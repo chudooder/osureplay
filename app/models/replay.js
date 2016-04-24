@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var pyshell = require('python-shell');
-var logger = require('../config/logger');
+var logger = require('../../config/logger');
 
 var TimelineEventSchema = new mongoose.Schema({
     t: Number,

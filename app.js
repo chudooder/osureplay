@@ -11,10 +11,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));
 
 // models
-require('./models/replay');
+require('./app/models/replay');
 
 // hook up routes
-require('./routes/api')(app);
+require('./app/routes/api')(app);
 
 mongoose.connect('mongodb://localhost/osureplay');
 
