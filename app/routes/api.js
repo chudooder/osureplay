@@ -22,7 +22,7 @@ module.exports = function(app) {
         res.render(index);
     });
 
-    app.get('/replays', function(req, res, next){
+    app.get('/api/replays', function(req, res, next){
         Replay.find(function(err, replays){
             if(err){ return next(err); }
 
@@ -30,7 +30,7 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/replay/:hash', function(req, res, next){
+    app.get('/api/replay/:hash', function(req, res, next){
         hash = req.params.hash;
         Replay.findOne({'replay_md5': hash}, function(err, replay){
             if(err){ return next(err); }
@@ -39,7 +39,7 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/user/:name', function(req, res, next){
+    app.get('/api/user/:name', function(req, res, next){
         name = req.params.name;
         Replay.find({'player': name}, function(err, playerReplays){
             if(err){ return next(err); }
@@ -53,7 +53,7 @@ module.exports = function(app) {
         })
     });
 
-    app.post('/upload', upload.single('userReplay'), function(req, res, next) {
+    app.post('/api/upload', upload.single('userReplay'), function(req, res, next) {
         // parse the replay
         Replay.parseReplay(req.file.path, function(replay) {
             if(replay) res.json(replay);

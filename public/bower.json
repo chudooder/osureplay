@@ -1,0 +1,23 @@
+{
+  "name": "osureplay",
+  "description": "osu! replay parser",
+  "main": "app.js",
+  "authors": [
+    "Shawn Wu"
+  ],
+  "license": "BSD-2-Clause",
+  "homepage": "https://github.com/chudooder/osureplay",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "angularjs#^1.5.5",
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.3",
+    "angular-route": "^1.5.5"
+  }
+}

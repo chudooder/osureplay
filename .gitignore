@@ -1,5 +1,6 @@
 *.pyc
 data/*
 node_modules/*
+public/bower_components/*
 uploads/*
 apikey

@@ -15,6 +15,7 @@ require('./app/models/replay');
 
 // hook up routes
 require('./app/routes/api')(app);
+require('./app/routes/page')(app);
 
 mongoose.connect('mongodb://localhost/osureplay');
 

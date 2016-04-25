@@ -1,7 +1,15 @@
-var app = angular.module('osureplay', []);
+var osuApp = angular.module('osuReplay', [
+    'ngRoute',
+    'osuUpload'
+    ]);
 
-app.controller('MainCtrl', [
-    '$scope',
-    function($scope){
-        $scope.test = 'whats up guys';
-    }]);
+osuApp.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+        when('/upload', {
+            templateUrl: 'views/upload.html',
+            controller: 'UploadCtrl'
+        }).
+        otherwise({
+            redirectTo: '/upload'
+        });
+}]);
