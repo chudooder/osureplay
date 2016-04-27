@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var multer = require('multer');
+var request = require('request');
 var Replay = mongoose.model('Replay');
 
 // define multer stuff
@@ -15,6 +16,34 @@ var storage = multer.diskStorage({
 var upload = multer({
     storage : storage
 });
+
+var verifyCaptcha = function(key, callback) {
+
+    // DEV DEV DEV DEV DEV
+    callback(true);
+    return;
+    // DEV DEV DEV DEV DEV
+
+    request({
+            url: 'https://www.google.com/recaptcha/api/siteverify',
+            method: 'POST',
+            form: {
+                secret: '6LeHWB4TAAAAAEnXnPIir3Z0IB4clLoOhKm7p1_D',
+                response: captcha
+            }
+        }, function(error, response, body) {
+            console.log(error);
+            body = JSON.parse(body);
+            if(error) {
+                console.log('got an error');
+                callback(false);
+            } else if(body['success']) {
+                callback(true);
+            } else {
+                callback(false);
+            }
+        });
+}
 
 /* Define routes */
 module.exports = function(app) {
@@ -54,13 +83,24 @@ module.exports = function(app) {
     });
 
     app.post('/api/upload', upload.single('userReplay'), function(req, res, next) {
-        // parse the replay
-        Replay.parseReplay(req.file.path, function(replay) {
-            if(replay) res.json(replay);
-            else {
-                res.json({'error': 'Invalid replay file.'});
+        // verify the recaptcha
+        captcha = req.body['g-recaptcha-response']
+        verifyCaptcha(captcha, function(success) {
+            if(!success) {
+                res.json({'error': 'recaptcha failed'});
+            } else if (!req.file) {
+                res.json({'error': 'No file selected'});
+            } else {
+                Replay.parseReplay(req.file.path, function(replay) {
+                    if(replay) res.json(replay);
+                    else {
+                        res.json({'error': 'Invalid replay file.'});
+                    }
+                });
             }
         });
+
+
     });
 }
 

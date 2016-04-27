@@ -2,12 +2,27 @@
 <html lang="en" ng-app="osuReplay">
 
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title> osu!replay </title>
+
+  <!-- Bootstrap imports -->
+  <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+
+  <!-- style imports -->
+  <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+  <link href="css/styles.css" rel="stylesheet" type="text/css">
+
+  <!-- grab AngularJS-->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-route/angular-route.js"></script>
+
+  <!-- reCaptcha -->
+  <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 
-<!-- grab AngularJS-->
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/angular-route/angular-route.js"></script>
 
 <!-- Import angular modules -->
 <script src="js/app.js"></script>
@@ -16,5 +31,9 @@
 <body>
   <div ng-view></div>
 </body>
+
+<!-- bootstrap core js imports -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 </html>

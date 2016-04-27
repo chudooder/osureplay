@@ -1,9 +1,13 @@
-<form id       =  "uploadForm"
-     enctype   =  "multipart/form-data"
-     action    =  "/upload"
-     method    =  "post"
->
-<input type="file" name="userReplay" />
-<input type="submit" value="Upload Replay" name="submit">
-<p> {{test}} </p>
-</form>
+<div class="container" ng-include="'views/header.html'"></div>
+<div class="container">
+  <div class="col-md-4">
+    <span class="file-input btn btn-block btn-primary btn-file">
+      {{fileName}}
+      <input type="file" name="userReplay" file-model="selectedFile" custom-on-change="updateFileText"/>
+    </span>
+    <p> {{test}} </p>
+    <div class="g-recaptcha" data-sitekey="6LeHWB4TAAAAAAC9a1v0k6AeSVTJrjXBeA-pbejm"></div>
+    <button ng-click="uploadFile()" class="btn btn-success">Parse!</button>
+  </div>
+  <div class="col-md-4">
+</div>
