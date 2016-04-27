@@ -1,4 +1,4 @@
-var osuUpload = angular.module('osuUpload', []);
+var osuUpload = angular.module('osuUpload', ['vcRecaptcha']);
 
 osuUpload.directive('customOnChange', function() {
     return {
@@ -42,7 +42,7 @@ osuUpload.controller('UploadCtrl', ['$scope', '$http',
             // send a post request
             var fd = new FormData();
             var file = $scope.selectedFile;
-            var captcha = $scope.gRecaptchaResponse;
+            var captcha = $scope.captchaResponse;
             fd.append('userReplay', file);
             fd.append('g-recaptcha-response', captcha);
             $http.post("/api/upload", fd, {

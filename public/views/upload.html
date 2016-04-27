@@ -6,7 +6,9 @@
       <input type="file" name="userReplay" file-model="selectedFile" custom-on-change="updateFileText"/>
     </span>
     <p> {{test}} </p>
-    <div class="g-recaptcha" data-sitekey="6LeHWB4TAAAAAAC9a1v0k6AeSVTJrjXBeA-pbejm"></div>
+    <div vc-recaptcha 
+      ng-model="captchaResponse"
+      key="'6LeHWB4TAAAAAAC9a1v0k6AeSVTJrjXBeA-pbejm'"></div>
     <button ng-click="uploadFile()" class="btn btn-success">Parse!</button>
   </div>
   <div class="col-md-4">
