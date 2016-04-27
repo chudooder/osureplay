@@ -1,15 +1,20 @@
 var osuApp = angular.module('osuReplay', [
     'ngRoute',
-    'osuUpload'
+    'osuUpload',
+    'osuSearch'
     ]);
 
 osuApp.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.
-        when('/upload', {
+    $routeProvider
+        .when('/upload', {
             templateUrl: 'views/upload.html',
             controller: 'UploadCtrl'
-        }).
-        otherwise({
+        })
+        .when('/search', {
+            templateUrl: 'views/search.html',
+            controller: 'SearchCtrl'
+        })
+        .otherwise({
             redirectTo: '/upload'
         });
 }]);

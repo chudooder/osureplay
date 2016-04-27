@@ -42,7 +42,9 @@ osuUpload.controller('UploadCtrl', ['$scope', '$http',
             // send a post request
             var fd = new FormData();
             var file = $scope.selectedFile;
+            var captcha = $scope.gRecaptchaResponse;
             fd.append('userReplay', file);
+            fd.append('g-recaptcha-response', captcha);
             $http.post("/api/upload", fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}

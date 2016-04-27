@@ -1,0 +1,41 @@
+<div class="container" ng-include="'views/header.html'"></div>
+
+<div class="container-fluid">
+  <div id="search-params">
+    <div class="row search-row">
+      <div class="col-sm-4">
+        <label>Player:</label>
+        <input type="text" ng-model="player" class="form-control" placeholder="Username">
+      </div>
+      <div class="col-sm-4">
+        <label>Beatmap Name:</label>
+        <input type="text" ng-model="bmName" class="form-control" placeholder="Beatmap Name">
+      </div>
+      <div class="col-sm-4">
+        <label>Beatmap ID:</label>
+        <input type="text" ng-model="bmID" class="form-control" placeholder="Beatmap ID">
+      </div>
+    </div>
+    <div class="row search-row">
+      <div class="col-sm-4">
+        <label>Mapper:</label>
+        <input type="text" ng-model="creator" class="form-control" placeholder="Mapper">
+      </div>
+      <div class="col-sm-4">
+        <label>Artist:</label>
+        <input type="text" ng-model="artist" class="form-control" placeholder="Artist">
+      </div>
+      <div class="col-sm-4">
+        <label>Version (Difficulty):</label>
+        <input type="text" ng-model="version" class="form-control" placeholder="Difficulty">
+      </div>
+    </div>
+    <div class="row search-row">
+      <div class="col-sm-4 col-sm-offset-4">
+        <div class="btn btn-default btn-block">
+          Search
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

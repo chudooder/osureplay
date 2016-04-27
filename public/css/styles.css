@@ -8,6 +8,7 @@ body {
     position: relative;
     overflow: hidden;
 }
+
 .btn-file input[type=file] {
     position: absolute;
     top: 0;
@@ -22,4 +23,16 @@ body {
     background: white;
     cursor: inherit;
     display: block;
+}
+
+/* Search page divs */
+#search-params {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-row {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
