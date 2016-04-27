@@ -14,6 +14,7 @@ var BeatmapSchema = new mongoose.Schema({
     name: String,
     artist: String,
     creator: String,
+    version: String,
     od: Number,
     cs: Number,
     ar: Number,
@@ -89,7 +90,8 @@ var ReplaySchema = new mongoose.Schema({
     circle_size: Number,
     hitmap: [Number],
     timings: [Number],
-    stream_timings: [Number]
+    stream_timings: [Number],
+    unstable_rate: Number
 });
 
 ReplaySchema.statics.parseReplay = function(pathToFile, cb) {

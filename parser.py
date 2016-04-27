@@ -16,6 +16,12 @@ HITMAP_RESOLUTION = 64
 HITMAP_SIZE = 128
 TIMING_RESOLUTION = 64
 
+class ModeError(Exception):
+    def __init__(self, value):
+        self.mode = value
+    def __str__(self):
+        return repr(self.mode)
+
 class HitObject:
     x = -1
     y = -1
@@ -84,11 +90,17 @@ def parse_osu(osu):
             beatmap['hp'] = float(line.split(':')[1])
         elif 'ApproachRate' in line:
             beatmap['ar'] = float(line.split(':')[1])
-        elif 'Title' in line:
+        elif 'Mode' in line:
+            mode = int(line.split(':')[1])
+            if mode != 0:
+                raise ModeError(mode)
+        elif 'Title' in line and 'Unicode' not in line:
             beatmap['title'] = line.split(':')[1].strip()
+        elif 'Version' in line:
+            beatmap['version'] = line.split(':')[1].strip()
         elif 'Artist' in line and 'Unicode' not in line:
             beatmap['artist'] = line.split(':')[1].strip()
-        elif 'Creator' in line and 'Unicode' not in line:
+        elif 'Creator' in line:
             beatmap['creator'] = line.split(':')[1].strip()
         elif 'BeatmapID' in line:
             beatmap['beatmap_id'] = line.split(':')[1].strip()
@@ -222,6 +234,7 @@ def simulate(objects, difficulty, replay):
 
     stream_num = 0
     stream_timings = []
+    all_timings = []
 
 
     for time in range(end_time):
@@ -263,6 +276,8 @@ def simulate(objects, difficulty, replay):
                             TIMING_RESOLUTION) + int(TIMING_RESOLUTION / 2)
                         timings[bucket] += 1
 
+                        all_timings.append(time_diff)
+
                         # if it's a stream, record the timing
                         if 'stream' in cur_obj.tags:
                             if stream_num >= len(stream_timings):
@@ -294,6 +309,8 @@ def simulate(objects, difficulty, replay):
     # done parsing! now to format the json
     # get streaming averages
     stream_avg = [sum(l) / len(l) for l in stream_timings]
+    # get unstable rate
+    unstable_rate = np.std(all_timings) * 10
 
     result = deepcopy(replay)
     result.pop('replay_data')
@@ -305,6 +322,7 @@ def simulate(objects, difficulty, replay):
     result['circle_size'] = RADIUS
     result['timings'] = timings.tolist()
     result['stream_timings'] = stream_avg
+    result['unstable_rate'] = unstable_rate
 
     difficulty['beatmap_md5'] = replay['beatmap_md5']
     result['beatmap'] = difficulty
