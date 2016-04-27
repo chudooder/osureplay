@@ -10,8 +10,13 @@ var TimelineEventSchema = new mongoose.Schema({
 
 var BeatmapSchema = new mongoose.Schema({
     beatmap_md5: String,
-    beatmap_id: Number,
-    name: String,
+    beatmap_id: {
+        type: Number,
+        required: true,
+        unique: true,
+        index: true
+    },
+    title: String,
     artist: String,
     creator: String,
     version: String,
@@ -100,46 +105,39 @@ ReplaySchema.statics.parseReplay = function(pathToFile, cb) {
         pythonPath: '/usr/bin/python3.4',
         args: [pathToFile]
     };
-    var res = null;
+
     pyshell.run('parser.py', options, function(err, results) {
         if(err) {
             logger.info(err);
             cb(null);
             return;
         }
-        js = JSON.parse(results[0]);
+
+        var js = JSON.parse(results[0]);
+
         new Replay(js).save(function(error){
             // duplicate key error
             if(error) {
                 if(error.code == 11000) {
                     logger.info('Duplicate key: ' + js.replay_md5)
+                    Replay.findOne({'replay_md5': js.replay_md5}, function(err, replay) {
+                        cb(replay);
+                    });
                 } else {
                     logger.info(error)
                 }
             } else {
                 logger.info('Saved replay ' + js.replay_md5);
+                cb(js);
             }
         });
-        cb(js);
     });
-
-    return res;
 };
 
-ReplaySchema.statics.summary = function(replay) {
-    var fields = ['replay_md5', 'beatmap', 'player', 'mode',
-        'num_300', 'num_100', 'num_50', 'num_geki', 'num_katu',
-        'num_miss', 'score', 'max_combo', 'mods', 'time_stamp'];
-    var summary = {}
-    for(var i in fields) {
-        var field = fields[i];
-        summary[field] = replay[field];
-    }
-    return summary;
-}
-
+var Beatmap = mongoose.model('Beatmap', BeatmapSchema);
 var Replay = mongoose.model('Replay', ReplaySchema);
 
 module.exports = {
-    Replay: Replay
+    Replay: Replay,
+    Beatmap: Beatmap
 };

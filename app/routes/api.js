@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
+var ObjectId = mongoose.Types.ObjectId;
 var multer = require('multer');
 var request = require('request');
 var Replay = mongoose.model('Replay');
+var Beatmap = mongoose.model('Beatmap');
 
 // define multer stuff
 var storage = multer.diskStorage({
@@ -60,7 +62,7 @@ module.exports = function(app) {
     });
 
     app.get('/api/replay/:hash', function(req, res, next){
-        hash = req.params.hash;
+        var hash = req.params.hash;
         Replay.findOne({'replay_md5': hash}, function(err, replay){
             if(err){ return next(err); }
 
@@ -68,23 +70,36 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/api/user/:name', function(req, res, next){
-        name = req.params.name;
-        Replay.find({'player': name}, function(err, playerReplays){
-            if(err){ return next(err); }
+    app.get('/api/search', function(req, res, next) {
+        var queryParams = {}
+        var request = req.query;
+        if(request.player) 
+            queryParams['player'] = request.player;
+        if(request.title)
+            queryParams['beatmap.title'] = request.title;
+        if(request.beatmap_id)
+            queryParams['beatmap.beatmap_id'] = request.beatmap_id;
+        if(request.creator)
+            queryParams['beatmap.creator'] = request.creator;
+        if(request.artist)
+            queryParams['beatmap.artist'] = request.artist;
+        if(request.version)
+            queryParams['beatmap.version'] = request.version;
 
-            summaries = []
-            for(var i in playerReplays) {
-                var replay = playerReplays[i];
-                summaries.push(Replay.summary(replay));
-            }
-            res.json(summaries);
-        })
+        Replay.find(queryParams)
+            .select('replay_md5 beatmap player mode num_300 '+
+                'num_100 num_50 num_geki num_katu num_miss score '+
+                'max_combo mods time_stamp')
+            .exec(function(err, replays) {
+                if(err) { return next(error) };
+                res.json(replays);
+            });
+
     });
 
     app.post('/api/upload', upload.single('userReplay'), function(req, res, next) {
         // verify the recaptcha
-        captcha = req.body['g-recaptcha-response']
+        var captcha = req.body['g-recaptcha-response']
         verifyCaptcha(captcha, function(success) {
             if(!success) {
                 res.json({'error': 'recaptcha failed'});
