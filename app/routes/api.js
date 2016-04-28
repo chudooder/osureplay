@@ -9,9 +9,6 @@ var Beatmap = mongoose.model('Beatmap');
 var storage = multer.diskStorage({
     destination: function(req, file, callback) {
         callback(null, './uploads');
-    },
-    filename: function(req, file, callback) {
-        callback(null, file.fieldname);
     }
 });
 
@@ -116,7 +113,6 @@ module.exports = function(app) {
                 });
             }
         });
-
 
     });
 }
