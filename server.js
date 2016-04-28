@@ -1,17 +1,23 @@
 var mongoose = require('mongoose');
 var express = require('express');
 var multer = require('multer');
+var autoReap = require('multer-autoreap')
 var path = require('path');
 var logger = require('morgan');
+
+autoReap.options = {
+    reapOnError: true
+};
 
 var app = express();
 
 // configure app
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));
+app.use(autoReap);
 
 // models
-require('./app/models/replay');
+require('./app/models/model');
 
 // hook up routes
 require('./app/routes/api')(app);
