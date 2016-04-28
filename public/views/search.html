@@ -43,59 +43,63 @@
 
   <div ng-repeat="rp in replays">
     <div class="container replay-entry">
-      <div class="col-sm-6">
+      <div class="col-xs-5">
         <h4>{{rp.beatmap.artist}} - {{rp.beatmap.title}} [{{rp.beatmap.version}}]</h4>
         <a target="_blank" ng-href="https://osu.ppy.sh/b/{{rp.beatmap.beatmap_id}}">
           <span style="font-size:1.5em;" title="Beatmap Page" class="glyphicon glyphicon-save-file"></span>
         </a>
         <small> Mapped by {{rp.beatmap.creator}} </small>
       </div>
-      <div class="col-sm-1">
-        <div class="row">
-          HP: {{rp.beatmap.hp | number:1}}
+      <div class="col-xs-2">
+        <div class="col-sm-6">
+          <div class="row">
+            HP: {{rp.beatmap.hp | number:1}}
+          </div>
+          <div class="row">
+            CS: {{rp.beatmap.cs | number:1}}
+          </div>
         </div>
-        <div class="row">
-          CS: {{rp.beatmap.cs | number:1}}
-        </div>
-      </div>
-      <div class="col-sm-1">
-        <div class="row"> 
-          AR: {{rp.beatmap.ar | number:1}}
-        </div>
-        <div class="row"> 
-          OD: {{rp.beatmap.od | number:1}}
-        </div>
-      </div>
-      <div target="_blank" class="col-sm-2">
-        <div class="row">
-          <a target="_blank" ng-href="http://osu.ppy.sh/u/{{rp.player}}">
-            <span class="glyphicon glyphicon-user"></span>
-            {{rp.player}}
-          </a>
-        </div>
-        <div class="row" title="Date">
-          <span class="glyphicon glyphicon-time"></span>
-          {{convertTime(rp.time_stamp)}}
-        </div>
-        <div class="row" title="Accuracy">
-          <span class="glyphicon glyphicon-screenshot"></span>
-          {{accuracy(rp) | number:2}}%
+        <div class="col-sm-6">
+          <div class="row"> 
+            AR: {{rp.beatmap.ar | number:1}}
+          </div>
+          <div class="row"> 
+            OD: {{rp.beatmap.od | number:1}}
+          </div>
         </div>
       </div>
-      <div class="col-sm-2">
-        <div class="row" title="Total Score">
-          <span class="glyphicon glyphicon-signal"></span>
-          {{rp.score | number}}
+      <div class="col-xs-5">
+        <div class="col-sm-6">
+          <div class="row">
+            <a target="_blank" ng-href="http://osu.ppy.sh/u/{{rp.player}}">
+              <span class="glyphicon glyphicon-user"></span>
+              {{rp.player}}
+            </a>
+          </div>
+          <div class="row" title="Date">
+            <span class="glyphicon glyphicon-time"></span>
+            {{convertTime(rp.time_stamp)}}
+          </div>
+          <div class="row" title="Accuracy">
+            <span class="glyphicon glyphicon-screenshot"></span>
+            {{accuracy(rp) | number:2}}%
+          </div>
         </div>
-        <div class="row" title="Max Combo">
-          <span class="glyphicon glyphicon-music"></span>
-          {{rp.max_combo | number}}x
-        </div>
-        <div class="row" title="300/100/50 - Miss">
-          <span class="glyphicon glyphicon-ok"></span>
-          {{rp.num_300}} / {{rp.num_100}} / {{rp.num_50}}
-          <span class="glyphicon glyphicon-remove"></span>
-          {{rp.num_miss}}
+        <div class="col-sm-6">
+          <div class="row" title="Total Score">
+            <span class="glyphicon glyphicon-signal"></span>
+            {{rp.score | number}}
+          </div>
+          <div class="row" title="Max Combo">
+            <span class="glyphicon glyphicon-music"></span>
+            {{rp.max_combo | number}}x
+          </div>
+          <div class="row" title="300/100/50 - Miss">
+            <span class="glyphicon glyphicon-ok"></span>
+            {{rp.num_300}} / {{rp.num_100}} / {{rp.num_50}}
+            <span class="glyphicon glyphicon-remove"></span>
+            {{rp.num_miss}}
+          </div>
         </div>
       </div>
     </div>

@@ -38,8 +38,14 @@ body {
 }
 
 .replay-entry {
-    background-color: #fafafa;
+    background-color: #f8f8f8;
     margin: 10px auto;
     padding: 10px;
+
+    transition: box-shadow 0.25s;
     box-shadow: 0px 3px 4px #ccc;
+}
+
+.replay-entry:hover {
+    box-shadow: 0px 3px 8px #FF85CA;
 }
