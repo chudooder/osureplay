@@ -6,8 +6,8 @@ osuSearch.controller('SearchCtrl', ['$scope', '$http',
         $scope.replays = []
 
         $scope.search = function() {
+            if($scope.formsEmpty()) return;
             params = {}
-            console.log('lmao');
             if($scope.player)
                 params['player'] = $scope.player;
             if($scope.bmID)
@@ -26,10 +26,50 @@ osuSearch.controller('SearchCtrl', ['$scope', '$http',
             })
             .success(function(response) {
                 $scope.replays = response;
-                console.log($scope.replays);
             })
             .error(function(response){
 
             });
-        }
+        };
+
+        $scope.convertTime = function(unixTS) {
+            var a = new Date(unixTS * 1000);
+            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            var year = a.getFullYear();
+            var month = months[a.getMonth()];
+            var date = a.getDate();
+            var time = date + ' ' + month + ' ' + year
+            return time;
+        };
+
+        $scope.accuracy = function(replay) {
+            var total = replay.num_300 + replay.num_100 
+                + replay.num_50 + replay.num_miss;
+            var weighted = replay.num_300 
+                + (1.0/3.0) * replay.num_100
+                + (1.0/6.0) * replay.num_50;
+            var accuracy = weighted / total;
+            return 100 * accuracy;
+        };
+
+
+        $scope.formsEmpty = function() {
+            return !($scope.player || $scope.bmID ||
+                $scope.creator || $scope.artist ||
+                $scope.title || $scope.version);
+        };
     }]);
+
+osuSearch.directive('onEnter', function() {
+    return function(scope, element, attrs) {
+        element.bind("keydown keypress", function(event){
+            if(event.which === 13) {
+                
+                scope.$apply(function (){
+                    scope.$eval(attrs.onEnter);
+                });
+                event.preventDefault();
+            }
+        })
+    }
+});

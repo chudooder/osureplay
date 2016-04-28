@@ -90,6 +90,8 @@ module.exports = function(app) {
             .select('replay_md5 beatmap player mode num_300 '+
                 'num_100 num_50 num_geki num_katu num_miss score '+
                 'max_combo mods time_stamp')
+            .sort({'time_stamp': -1})
+            .limit(20)
             .exec(function(err, replays) {
                 if(err) { return next(error) };
                 res.json(replays);

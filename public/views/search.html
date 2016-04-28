@@ -5,41 +5,99 @@
     <div class="row search-row">
       <div class="col-sm-4">
         <label>Player:</label>
-        <input type="text" ng-model="player" class="form-control" placeholder="Username">
+        <input on-enter="search()" type="text" ng-model="player" class="form-control" placeholder="Username">
       </div>
       <div class="col-sm-4">
         <label>Beatmap Title:</label>
-        <input type="text" ng-model="title" class="form-control" placeholder="Beatmap Title">
+        <input on-enter="search()" type="text" ng-model="title" class="form-control" placeholder="Beatmap Title">
       </div>
       <div class="col-sm-4">
         <label>Beatmap ID:</label>
-        <input type="text" ng-model="bmID" class="form-control" placeholder="Beatmap ID">
+        <input on-enter="search()" type="text" ng-model="bmID" class="form-control" placeholder="Beatmap ID">
       </div>
     </div>
     <div class="row search-row">
       <div class="col-sm-4">
         <label>Mapper:</label>
-        <input type="text" ng-model="creator" class="form-control" placeholder="Mapper">
+        <input on-enter="search()" type="text" ng-model="creator" class="form-control" placeholder="Mapper">
       </div>
       <div class="col-sm-4">
         <label>Artist:</label>
-        <input type="text" ng-model="artist" class="form-control" placeholder="Artist">
+        <input on-enter="search()" type="text" ng-model="artist" class="form-control" placeholder="Artist">
       </div>
       <div class="col-sm-4">
         <label>Version (Difficulty):</label>
-        <input type="text" ng-model="version" class="form-control" placeholder="Difficulty">
+        <input on-enter="search()" type="text" ng-model="version" class="form-control" placeholder="Difficulty">
       </div>
     </div>
     <div class="row search-row">
       <div class="col-sm-4 col-sm-offset-4">
-        <div ng-click="search()" class="btn btn-default btn-block">
+        <div ng-disabled="formsEmpty()" ng-click="search()" class="btn btn-default btn-block">
           Search
         </div>
       </div>
     </div>
   </div>
 
+  <hr>
+
   <div ng-repeat="rp in replays">
-    {{ rp.beatmap.artist }} - {{ rp.beatmap.title }}
+    <div class="container replay-entry">
+      <div class="col-sm-6">
+        <h4>{{rp.beatmap.artist}} - {{rp.beatmap.title}} [{{rp.beatmap.version}}]</h4>
+        <a target="_blank" ng-href="https://osu.ppy.sh/b/{{rp.beatmap.beatmap_id}}">
+          <span style="font-size:1.5em;" title="Beatmap Page" class="glyphicon glyphicon-save-file"></span>
+        </a>
+        <small> Mapped by {{rp.beatmap.creator}} </small>
+      </div>
+      <div class="col-sm-1">
+        <div class="row">
+          HP: {{rp.beatmap.hp | number:1}}
+        </div>
+        <div class="row">
+          CS: {{rp.beatmap.cs | number:1}}
+        </div>
+      </div>
+      <div class="col-sm-1">
+        <div class="row"> 
+          AR: {{rp.beatmap.ar | number:1}}
+        </div>
+        <div class="row"> 
+          OD: {{rp.beatmap.od | number:1}}
+        </div>
+      </div>
+      <div target="_blank" class="col-sm-2">
+        <div class="row">
+          <a target="_blank" ng-href="http://osu.ppy.sh/u/{{rp.player}}">
+            <span class="glyphicon glyphicon-user"></span>
+            {{rp.player}}
+          </a>
+        </div>
+        <div class="row" title="Date">
+          <span class="glyphicon glyphicon-time"></span>
+          {{convertTime(rp.time_stamp)}}
+        </div>
+        <div class="row" title="Accuracy">
+          <span class="glyphicon glyphicon-screenshot"></span>
+          {{accuracy(rp) | number:2}}%
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="row" title="Total Score">
+          <span class="glyphicon glyphicon-signal"></span>
+          {{rp.score | number}}
+        </div>
+        <div class="row" title="Max Combo">
+          <span class="glyphicon glyphicon-music"></span>
+          {{rp.max_combo | number}}x
+        </div>
+        <div class="row" title="300/100/50 - Miss">
+          <span class="glyphicon glyphicon-ok"></span>
+          {{rp.num_300}} / {{rp.num_100}} / {{rp.num_50}}
+          <span class="glyphicon glyphicon-remove"></span>
+          {{rp.num_miss}}
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -36,3 +36,10 @@ body {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+.replay-entry {
+    background-color: #fafafa;
+    margin: 10px auto;
+    padding: 10px;
+    box-shadow: 0px 3px 4px #ccc;
+}

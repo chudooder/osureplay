@@ -16,6 +16,7 @@ var BeatmapSchema = new mongoose.Schema({
         unique: true,
         index: true
     },
+    beatmap_set_id: Number,
     title: String,
     artist: String,
     creator: String,

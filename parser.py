@@ -104,6 +104,8 @@ def parse_osu(osu):
             beatmap['creator'] = line.split(':')[1].strip()
         elif 'BeatmapID' in line:
             beatmap['beatmap_id'] = line.split(':')[1].strip()
+        elif 'BeatmapSetID' in line:
+            beatmap['beatmap_set_id'] = line.split(':')[1].strip()
 
         elif '[TimingPoints]' in line:
             in_timings = True
