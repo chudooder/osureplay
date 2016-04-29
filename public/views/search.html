@@ -2,32 +2,18 @@
 
 <div class="container-fluid">
   <div id="search-params">
-    <div class="row search-row">
+    <div ng-repeat="i in inputs" ng-if="$index%3 == 0"class="row search-row">
       <div class="col-sm-4">
-        <label>Player:</label>
-        <input on-enter="search()" type="text" ng-model="player" class="form-control" placeholder="Username">
+        <label>{{inputs[$index].name}}</label>
+        <input on-enter="search()" type="text" ng-model="inputs[$index].value" class="form-control" placeholder="{{inputs[$index].name}}">
       </div>
-      <div class="col-sm-4">
-        <label>Beatmap Title:</label>
-        <input on-enter="search()" type="text" ng-model="title" class="form-control" placeholder="Beatmap Title">
+      <div class="col-sm-4" ng-if="inputs.length > ($index + 1)">
+        <label>{{inputs[$index+1].name}}</label>
+        <input on-enter="search()" type="text" ng-model="inputs[$index+1].value" class="form-control" placeholder="{{inputs[$index+1].name}}">
       </div>
-      <div class="col-sm-4">
-        <label>Beatmap ID:</label>
-        <input on-enter="search()" type="text" ng-model="bmID" class="form-control" placeholder="Beatmap ID">
-      </div>
-    </div>
-    <div class="row search-row">
-      <div class="col-sm-4">
-        <label>Mapper:</label>
-        <input on-enter="search()" type="text" ng-model="creator" class="form-control" placeholder="Mapper">
-      </div>
-      <div class="col-sm-4">
-        <label>Artist:</label>
-        <input on-enter="search()" type="text" ng-model="artist" class="form-control" placeholder="Artist">
-      </div>
-      <div class="col-sm-4">
-        <label>Version (Difficulty):</label>
-        <input on-enter="search()" type="text" ng-model="version" class="form-control" placeholder="Difficulty">
+      <div class="col-sm-4" ng-if="inputs.length > ($index + 2)">
+        <label>{{inputs[$index+2].name}}</label>
+        <input on-enter="search()" type="text" ng-model="inputs[$index+2].value" class="form-control" placeholder="{{inputs[$index+2].name}}">
       </div>
     </div>
     <div class="row search-row">

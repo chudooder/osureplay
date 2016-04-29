@@ -1,34 +1,56 @@
 var osuSearch = angular.module('osuSearch', []);
 
+osuSearch.service('searchService', function() {
+    var params = [
+        { name: 'Player', model: 'player', value: '' },
+        { name: 'Beatmap Title', model: 'title', value: '' },
+        { name: 'Beatmap ID', model: 'beatmap_id', value: '' },
+        { name: 'Creator', model: 'creator', value: '' },
+        { name: 'Artist', model: 'artist', value: '' },
+        { name: 'Version (Difficulty)', mode: 'version', value: '' }
+    ];
+
+    var searchResults = [];
+
+    var setSearchResults = function(replays) {
+        searchResults = replays;
+    }
+
+    var getSearchResults = function() {
+        return searchResults;
+    }
+
+    return {
+        params: params,
+        setSearchResults: setSearchResults,
+        getSearchResults: getSearchResults
+    }
+});
+
 osuSearch.controller('SearchCtrl', [
     '$scope', 
     '$http', 
     '$window',
     'replayService',
-    function($scope, $http, $window, replayService) {
-        $scope.replays = []
+    'searchService',
+    function($scope, $http, $window, replayService, searchService) {
+        $scope.replays = searchService.getSearchResults();
+        $scope.inputs = searchService.params;
 
         $scope.search = function() {
             if($scope.formsEmpty()) return;
-            params = {}
-            if($scope.player)
-                params['player'] = $scope.player;
-            if($scope.bmID)
-                params['beatmap_id'] = $scope.bmID;
-            if($scope.creator)
-                params['creator'] = $scope.creator;
-            if($scope.artist)
-                params['artist'] = $scope.artist;
-            if($scope.bmName)
-                params['title'] = $scope.title;
-            if($scope.version)
-                params['version'] = $scope.version;
+            var params = {}
+            for(input in $scope.inputs) {
+                var param = $scope.inputs[input];
+                params[param.model] = param.value;
+            }
 
             $http.get("/api/search", {
                 params: params
             })
             .success(function(res) {
                 $scope.replays = res;
+                searchService.setSearchResults($scope.replays);
             })
             .error(function(res){
 
@@ -57,9 +79,13 @@ osuSearch.controller('SearchCtrl', [
 
 
         $scope.formsEmpty = function() {
-            return !($scope.player || $scope.bmID ||
-                $scope.creator || $scope.artist ||
-                $scope.title || $scope.version);
+            for(input in $scope.inputs) {
+                var param = $scope.inputs[input];
+                if(param.value != "") {
+                    return false;
+                }
+            }
+            return true;
         };
 
         $scope.selectReplay = function(replay) {
