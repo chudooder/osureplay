@@ -1,8 +1,11 @@
 var osuSearch = angular.module('osuSearch', []);
 
-osuSearch.controller('SearchCtrl', ['$scope', '$http',
-    function($scope, $http) {
-        $scope.test = 'hello bam';
+osuSearch.controller('SearchCtrl', [
+    '$scope', 
+    '$http', 
+    '$window',
+    'replayService',
+    function($scope, $http, $window, replayService) {
         $scope.replays = []
 
         $scope.search = function() {
@@ -24,10 +27,10 @@ osuSearch.controller('SearchCtrl', ['$scope', '$http',
             $http.get("/api/search", {
                 params: params
             })
-            .success(function(response) {
-                $scope.replays = response;
+            .success(function(res) {
+                $scope.replays = res;
             })
-            .error(function(response){
+            .error(function(res){
 
             });
         };
@@ -57,6 +60,12 @@ osuSearch.controller('SearchCtrl', ['$scope', '$http',
             return !($scope.player || $scope.bmID ||
                 $scope.creator || $scope.artist ||
                 $scope.title || $scope.version);
+        };
+
+        $scope.selectReplay = function(replay) {
+            replayService.setReplayData(replay);
+            // redirect to replay page
+            $window.location.href = '/#/replay/'+replay.replay_md5;
         };
     }]);
 

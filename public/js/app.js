@@ -1,7 +1,8 @@
-var osuApp = angular.module('osuReplay', [
+var osuApp = angular.module('osuApp', [
     'ngRoute',
     'osuUpload',
-    'osuSearch'
+    'osuSearch',
+    'osuReplay'
     ]);
 
 osuApp.config(['$routeProvider', function($routeProvider) {
@@ -14,7 +15,29 @@ osuApp.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'views/search.html',
             controller: 'SearchCtrl'
         })
+        .when('/replay/:hash', {
+            templateUrl: 'views/replay.html',
+            controller: 'ReplayCtrl'
+        })
         .otherwise({
             redirectTo: '/upload'
         });
 }]);
+
+osuApp.service('replayService', function() {
+    var replayData;
+
+    var setReplayData = function(data) {
+        replayData = data;
+        // console.log(replayData);
+    };
+
+    var getReplayData = function() {
+        return replayData;
+    };
+
+    return {
+        setReplayData: setReplayData,
+        getReplayData: getReplayData
+    };
+});

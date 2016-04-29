@@ -42,7 +42,7 @@
   <hr>
 
   <div ng-repeat="rp in replays">
-    <div class="container replay-entry">
+    <div class="container replay-entry" ng-click="selectReplay(rp)">
       <div class="col-xs-5">
         <h4>{{rp.beatmap.artist}} - {{rp.beatmap.title}} [{{rp.beatmap.version}}]</h4>
         <a target="_blank" ng-href="https://osu.ppy.sh/b/{{rp.beatmap.beatmap_id}}">

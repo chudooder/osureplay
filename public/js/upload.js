@@ -26,8 +26,12 @@ osuUpload.directive('fileModel', ['$parse', function ($parse) {
     };
 }]);
 
-osuUpload.controller('UploadCtrl', ['$scope', '$http', 
-    function($scope, $http) {
+osuUpload.controller('UploadCtrl', [
+    '$scope', 
+    '$http', 
+    '$window',
+    'replayService',
+    function($scope, $http, $window, replayService) {
         $scope.test = 'Hello fam';
         $scope.fileName = 'Browse...';
 
@@ -39,7 +43,7 @@ osuUpload.controller('UploadCtrl', ['$scope', '$http',
         }
 
         $scope.uploadFile = function() {
-            // send a post request
+            // send a post request with the uploaded data
             var fd = new FormData();
             var file = $scope.selectedFile;
             var captcha = $scope.captchaResponse;
@@ -50,8 +54,13 @@ osuUpload.controller('UploadCtrl', ['$scope', '$http',
                 headers: {'Content-Type': undefined}
             })
             .success(function(response) {
-                $scope.test = "got the file mate.";
-                console.log(response);
+                if(response.error) {    // error in parsing
+                    $scope.test = "Something went wrong!";
+                } else {                // parsing successful
+                    replayService.setReplayData(response);
+                    $window.location.href = '/#/replay/'
+                        +response.replay_md5
+                }
             })
             .error(function(response) {
                 $scope.test = "whoops";
