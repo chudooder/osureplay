@@ -24,7 +24,8 @@ var BeatmapSchema = new mongoose.Schema({
     od: Number,
     cs: Number,
     ar: Number,
-    hp: Number
+    hp: Number,
+    length: Number
 });
 
 var ReplaySchema = new mongoose.Schema({

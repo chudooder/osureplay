@@ -31,9 +31,8 @@ osuSearch.controller('SearchCtrl', [
     '$scope', 
     '$http', 
     '$window',
-    'replayService',
     'searchService',
-    function($scope, $http, $window, replayService, searchService) {
+    function($scope, $http, $window, searchService) {
         $scope.replays = searchService.getSearchResults();
         $scope.inputs = searchService.params;
 
@@ -50,7 +49,7 @@ osuSearch.controller('SearchCtrl', [
             })
             .success(function(res) {
                 $scope.replays = res;
-                searchService.setSearchResults($scope.replays);
+                searchService.setSearchResults(res);
             })
             .error(function(res){
 
@@ -89,7 +88,6 @@ osuSearch.controller('SearchCtrl', [
         };
 
         $scope.selectReplay = function(replay) {
-            replayService.setReplayData(replay);
             // redirect to replay page
             $window.location.href = '/#/replay/'+replay.replay_md5;
         };
@@ -99,7 +97,6 @@ osuSearch.directive('onEnter', function() {
     return function(scope, element, attrs) {
         element.bind("keydown keypress", function(event){
             if(event.which === 13) {
-                
                 scope.$apply(function (){
                     scope.$eval(attrs.onEnter);
                 });
