@@ -219,6 +219,7 @@ def simulate(objects, difficulty, replay):
     RADIUS = circle_radius(difficulty['cs'], mods['hard_rock'], mods['easy'])
     replay_data = replay['replay_data']
     end_time = max([objects[-1].time, replay_data[-1]['time']])
+    difficulty['length'] = objects[-1].time
 
     # iteration variables
     inputs = deque(replay_data)
@@ -237,7 +238,6 @@ def simulate(objects, difficulty, replay):
     stream_num = 0
     stream_timings = []
     all_timings = []
-
 
     for time in range(end_time):
         # check if input advances
@@ -298,7 +298,6 @@ def simulate(objects, difficulty, replay):
 
         # hit object expires
         if cur_obj != None and time > cur_obj.time + WINDOW[2]:
-            stats['misses'] += 1
             prev_obj = cur_obj
             cur_obj = None
 
