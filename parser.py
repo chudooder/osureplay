@@ -298,6 +298,11 @@ def simulate(objects, difficulty, replay):
 
         # hit object expires
         if cur_obj != None and time > cur_obj.time + WINDOW[2]:
+            timeline.append({       \
+                't': cur_obj.time,  \
+                'event': 'miss',    \
+                'timing': 0         \
+            })
             prev_obj = cur_obj
             cur_obj = None
 

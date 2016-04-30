@@ -53,7 +53,7 @@ osuReplay.directive('timelinePlot', [
 
         var margin = {top: 10, right: 10, bottom: 10, left: 10};
         var width;
-        var height = 200;
+        var height = 150;
 
         var svg = d3.select(element[0])
             .append('svg');
@@ -92,7 +92,7 @@ osuReplay.directive('timelinePlot', [
             var lineWidth = 10;
             var lineX1 = xScale(0);
             var lineX2 = xScale(length);
-            var lineY = margin.top + height - lineWidth/2;
+            var lineY = margin.top + height - lineWidth/2 - 20;
             svg.append('line')
                 .attr('x1', lineX1)
                 .attr('y1', lineY)
