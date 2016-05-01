@@ -40,7 +40,6 @@ var initScope = function(scope, replay) {
         objects: replay.timeline,
         length: replay.beatmap.length
     }
-    console.log(replay);
 }
 
 // timeline
@@ -72,11 +71,17 @@ osuReplay.directive('timelinePlot', [
             return mapping[d.event];
         }
 
+        function pad(num, size) {
+            var s = num+"";
+            while (s.length < size) s = "0" + s;
+            return s;
+        }
+
         var getTimeString = function(len) {
             var mins = Math.floor(len / 60000);
             var secs = Math.floor(len / 1000) % 60;
 
-            return mins + ':' + secs
+            return mins + ':' + pad(secs, 2);
         }
 
         // main stuff
@@ -85,7 +90,6 @@ osuReplay.directive('timelinePlot', [
             if(!newVal) {
                 return;
             }
-            console.log('updating at width ' + width);
 
             var length = newVal.length;
             var objects = newVal.objects;
@@ -164,7 +168,6 @@ osuReplay.directive('timelinePlot', [
         scope.$watch('val', update);
 
         var resize = function() {
-            console.log('ayy');
             width = elem.clientWidth - margin.left - margin.right;
             // height = elem.clientHeight - margin.top - margin.bottom;
             
