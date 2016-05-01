@@ -53,7 +53,7 @@ osuReplay.directive('timelinePlot', [
 
         var margin = {top: 10, right: 10, bottom: 10, left: 10};
         var width;
-        var height = 150;
+        var height = 70;
 
         var svg = d3.select(element[0])
             .append('svg');
@@ -72,6 +72,13 @@ osuReplay.directive('timelinePlot', [
             return mapping[d.event];
         }
 
+        var getTimeString = function(len) {
+            var mins = Math.floor(len / 60000);
+            var secs = Math.floor(len / 1000) % 60;
+
+            return mins + ':' + secs
+        }
+
         // main stuff
 
         var update = function(newVal, oldVal) {
@@ -88,35 +95,33 @@ osuReplay.directive('timelinePlot', [
             // reset the plot
             svg.selectAll('*').remove();
 
+
+            var timingTooltip = svg.append('text')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('text-anchor', 'middle')
+                .style('fill', '#666')
+                .text('lmao');
+
             // draw the base line
             var lineWidth = 10;
             var lineX1 = xScale(0);
             var lineX2 = xScale(length);
             var lineY = margin.top + height - lineWidth/2 - 20;
+            var lineColor = '#CCC';
+            if(objects.length == 0) {
+                lineColor = '#FFBF00'
+            }
             svg.append('line')
                 .attr('x1', lineX1)
                 .attr('y1', lineY)
                 .attr('x2', lineX2)
                 .attr('y2', lineY)
                 .style('stroke-width', lineWidth)
-                .style('stroke', '#CCC')
+                .style('stroke', lineColor)
                 .style('stroke-linecap', 'round');
 
             // iterate over data and draw points on line
-
-            /*
-            var rectWidth = 6;
-            var rectHeight = 20;
-            svg.selectAll('rect')
-                .data(objects)
-            .enter().append('rect')
-                .attr('x', function(d) { return xMap(d) - rectWidth/2 })
-                .attr('y', lineY - rectHeight/2)
-                .attr('width', rectWidth)
-                .attr('height', rectHeight)
-                .style('fill', cMap)
-                .style('opacity', 0.5);
-            */
             
             var circleRadius = 5;
             svg.selectAll('circle')
@@ -128,7 +133,31 @@ osuReplay.directive('timelinePlot', [
                 .style('fill', 'white')
                 .style('stroke', cMap)
                 .style('stroke-width', 2)
-                .style('opacity', 1);
+                .style('opacity', 1)
+                .on('mouseover', function(d) {
+                    timingTooltip.style('visibility', 'visible')
+                        .text(d.timing+' ms');
+                })
+                .on('mouseout', function(d) {
+                    timingTooltip.style('visibility', 'hidden');
+                })
+                .on('mousemove', function(d) {
+                    timingTooltip.attr('x', d3.select(this).attr('cx'))
+                        .attr('y', lineY - 20);
+                })
+
+            svg.append('text')
+                .attr('x', lineX1)
+                .attr('y', lineY + 20)
+                .attr('fill', '#666')
+                .text('0:00');
+
+            svg.append('text')
+                .attr('x', lineX2)
+                .attr('y', lineY + 20)
+                .attr('fill', '#666')
+                .attr('text-anchor', 'end')
+                .text(getTimeString(length));
             
 
         };
