@@ -33,6 +33,7 @@ osuSearch.controller('SearchCtrl', [
     '$window',
     'searchService',
     function($scope, $http, $window, searchService) {
+        $scope.searchError = null;
         $scope.replays = searchService.getSearchResults();
         $scope.inputs = searchService.params;
 
@@ -51,10 +52,16 @@ osuSearch.controller('SearchCtrl', [
             })
             .success(function(res) {
                 $scope.replays = res;
+                $scope.searched = true;
+                if($scope.replays.length == 0) {
+                    $scope.searchError = "No results; try another search."
+                } else {
+                    $scope.searchError = null
+                }
                 searchService.setSearchResults(res);
             })
             .error(function(res){
-
+                $scope.searchError = "Some strange error occurred."
             });
         };
 

@@ -27,6 +27,10 @@
 
   <hr>
 
+  <div class="results-error" ng-if="searchError">
+    {{searchError}}
+  </div>
+
   <div ng-repeat="rp in replays">
     <div class="container replay-entry" ng-click="selectReplay(rp)">
       <div class="col-xs-5">

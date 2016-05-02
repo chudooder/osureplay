@@ -37,6 +37,10 @@ body {
     margin-bottom: 5px;
 }
 
+.results-error {
+    text-align: center;
+}
+
 .replay-entry {
     background-color: #f8f8f8;
     margin: 10px auto;
