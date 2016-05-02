@@ -7,7 +7,7 @@ osuSearch.service('searchService', function() {
         { name: 'Beatmap ID', model: 'beatmap_id', value: '' },
         { name: 'Creator', model: 'creator', value: '' },
         { name: 'Artist', model: 'artist', value: '' },
-        { name: 'Version (Difficulty)', mode: 'version', value: '' }
+        { name: 'Version (Difficulty)', model: 'version', value: '' }
     ];
 
     var searchResults = [];
@@ -43,6 +43,8 @@ osuSearch.controller('SearchCtrl', [
                 var param = $scope.inputs[input];
                 params[param.model] = param.value;
             }
+
+            console.log(params);
 
             $http.get("/api/search", {
                 params: params
