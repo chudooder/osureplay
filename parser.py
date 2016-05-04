@@ -96,12 +96,16 @@ def parse_osu(osu):
                 raise ModeError(mode)
         elif 'Title' in line and 'Unicode' not in line:
             beatmap['title'] = line.split(':')[1].strip()
+            beatmap['title_lower'] = beatmap['title'].lower()
         elif 'Version' in line:
             beatmap['version'] = line.split(':')[1].strip()
+            beatmap['version_lower'] = beatmap['version'].lower()
         elif 'Artist' in line and 'Unicode' not in line:
             beatmap['artist'] = line.split(':')[1].strip()
+            beatmap['artist_lower'] = beatmap['artist'].lower()
         elif 'Creator' in line:
             beatmap['creator'] = line.split(':')[1].strip()
+            beatmap['creator_lower'] = beatmap['creator'].lower()
         elif 'BeatmapID' in line:
             beatmap['beatmap_id'] = line.split(':')[1].strip()
         elif 'BeatmapSetID' in line:

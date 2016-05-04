@@ -18,9 +18,25 @@ var BeatmapSchema = new mongoose.Schema({
     },
     beatmap_set_id: Number,
     title: String,
+    title_lower: {
+        type: String,
+        index: true
+    },
     artist: String,
+    artist_lower: {
+        type: String,
+        index: true
+    },
     creator: String,
+    creator_lower: {
+        type: String,
+        index: true
+    },
     version: String,
+    version_lower: {
+        type: String,
+        index: true
+    },
     od: Number,
     cs: Number,
     ar: Number,
@@ -40,6 +56,9 @@ var ReplaySchema = new mongoose.Schema({
         index: true
     },
     player: {
+        type: String,
+    },
+    player_lower: {
         type: String,
         index: true
     },

@@ -400,6 +400,7 @@ def parseReplay(osr):
     data['version'], offset = parseNum(osr, offset, 4)
     data['beatmap_md5'], offset = parseString(osr, offset)
     data['player'], offset = parseString(osr, offset)
+    data['player_lower'] = data['player'].lower()
     data['replay_md5'], offset = parseString(osr, offset)
     data['num_300'], offset = parseNum(osr, offset, 2)
     data['num_100'], offset = parseNum(osr, offset, 2)

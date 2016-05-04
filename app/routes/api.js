@@ -71,17 +71,17 @@ module.exports = function(app) {
         var queryParams = {}
         var request = req.query;
         if(request.player) 
-            queryParams['player'] = request.player;
+            queryParams['player_lower'] = request.player.toLowerCase();
         if(request.title)
-            queryParams['beatmap.title'] = request.title;
+            queryParams['beatmap.title_lower'] = request.title.toLowerCase();
         if(request.beatmap_id)
             queryParams['beatmap.beatmap_id'] = request.beatmap_id;
         if(request.creator)
-            queryParams['beatmap.creator'] = request.creator;
+            queryParams['beatmap.creator_lower'] = request.creator.toLowerCase();
         if(request.artist)
-            queryParams['beatmap.artist'] = request.artist;
+            queryParams['beatmap.artist_lower'] = request.artist.toLowerCase();
         if(request.version)
-            queryParams['beatmap.version'] = request.version;
+            queryParams['beatmap.version_lower'] = request.version.toLowerCase();
 
         Replay.find(queryParams)
             .select('replay_md5 beatmap player mode num_300 '+
