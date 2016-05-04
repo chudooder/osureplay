@@ -4,12 +4,26 @@
         <h2>{{error}}</h2>
         <h1>{{replay.beatmap.title}}</h1>
     </div>
-    <div class="plot-box">
-        Timeline
-        <timeline-plot class="plot-responsive" val="timeline"></timeline-plot>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="plot-box">
+                Timeline
+                <timeline-plot class="plot-responsive" val="timeline"></timeline-plot>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-6 plot-box">
-        Timing Distribution
-        <timing-distrib class="plot-responsive" val="timings"></timing-distrib>
-    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="plot-box">
+                Timing Distribution
+                <timing-plot class="plot-responsive" val="timings"></timing-plot>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="plot-box">
+                Stream Timings
+                <streams-plot class="plot-responsive" val="streams"></streams-plot>
+            </div>
+        </div>
+    </row>
 </div>

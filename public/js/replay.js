@@ -65,4 +65,8 @@ var initScope = function(scope, replay) {
         timingWindow: timingWindow,
         buckets: replay.timings
     }
+    scope.streams = {
+        timingWindow: timingWindow,
+        timings: replay.stream_timings
+    }
 };

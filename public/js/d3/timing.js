@@ -1,5 +1,5 @@
 // timing distribution
-osuReplay.directive('timingDistrib', [
+osuReplay.directive('timingPlot', [
     '$window',
     function($window) {
 

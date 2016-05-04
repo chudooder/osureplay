@@ -1,4 +1,3 @@
-
 // timeline
 osuReplay.directive('timelinePlot', [
     '$window', 
