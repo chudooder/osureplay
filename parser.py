@@ -179,9 +179,13 @@ def circle_radius(cs, hd, ez):
         mod_cs += 1
     return (104.0 - mod_cs * 8.0) / 2.0
 
-def dist(p_input, obj):
-    return math.sqrt(math.pow(p_input['x'] - obj.x, 2) + \
-        math.pow(p_input['y'] - obj.y, 2))
+def dist(p_input, obj, hr):
+    if hr:
+        return math.sqrt(math.pow(p_input['x'] - obj.x, 2) + \
+            math.pow(p_input['y'] - (384 - obj.y), 2))
+    else:
+        return math.sqrt(math.pow(p_input['x'] - obj.x, 2) + \
+            math.pow(p_input['y'] - obj.y, 2))
 
 def score_hit(time, obj, window):
     if obj.lenient and abs(time - obj.time) <= window[2]:
@@ -261,7 +265,7 @@ def simulate(objects, difficulty, replay):
                             keys[kk] += 1
 
                     # check if player hit current hitobject
-                    if cur_obj != None and dist(cur_input, cur_obj) < RADIUS:
+                    if cur_obj != None and dist(cur_input, cur_obj, mods['hard_rock']) < RADIUS:
                         # it's a hit!
                         score_val = score_hit(time, cur_obj, WINDOW)
                         time_diff = time - cur_obj.time
@@ -370,7 +374,9 @@ def get_beatmap_id(bm_hash):
     if len(jsonRes) == 0:
         return None
 
-    return jsonRes[0]['beatmap_id']
+    res = jsonRes[0]
+
+    return (res['beatmap_id'], res['beatmapset_id'], res['difficultyrating'])
 
 if __name__ == '__main__':
     # bm_file = 'data/granat.osu'
@@ -390,10 +396,10 @@ if __name__ == '__main__':
     bm_path = 'data/' + bm_hash + '.osu'
     bm_file = None
 
+    bm_id, bm_set_id, sd = get_beatmap_id(bm_hash)
     if os.path.isfile(bm_path):
         bm_file = open(bm_path)
     else:
-        bm_id = get_beatmap_id(bm_hash)
         # download the beatmap file to the local file system
         if bm_id != None:
             urllib.request.urlretrieve('https://osu.ppy.sh/osu/' + bm_id, bm_path)
@@ -405,6 +411,11 @@ if __name__ == '__main__':
     replay_file = open(rp_file, 'rb').read()
 
     objects, beatmap = parse_osu(bm_file)
+
+    beatmap['beatmap_id'] = bm_id
+    beatmap['beatmap_set_id'] = bm_set_id
+    beatmap['sd'] = sd
+
     results = simulate(objects, beatmap, replay)
     print(json.dumps(results))
 
