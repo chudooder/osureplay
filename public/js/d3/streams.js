@@ -89,6 +89,14 @@ osuReplay.directive('streamsPlot', [
             .enter().append('rect')
                 .attr('class', 'bar')
                 .attr('x', xMap)
+                .attr('y', centerY)
+                .attr('height', 0)
+                .attr('width', barWidth)
+                .style('fill', colorMap)
+            .transition(500)
+                .delay(function(d, i) {
+                    return i * 50; 
+                })
                 .attr('y', function(d, i) {
                     var height = yMap(d, i);
                     if(height > 0) {
@@ -97,11 +105,9 @@ osuReplay.directive('streamsPlot', [
                         return centerY + height;
                     }
                 })
-                .attr('width', barWidth)
                 .attr('height', function(d, i) {
                     return Math.abs(yMap(d, i));
-                })
-                .style('fill', colorMap);
+                });
 
             // hover area
             svg.selectAll('.hoverarea')

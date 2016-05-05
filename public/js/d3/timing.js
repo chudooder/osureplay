@@ -72,7 +72,7 @@ osuReplay.directive('timingPlot', [
             .transition()
                 .duration(500)
                 .delay(function(d, i) {
-                    return 100 * Math.abs(i - buckets.length / 2);
+                    return 50 * Math.abs(i - buckets.length / 2);
                 })
                 .attr('y', function(d, i) {
                     return height + margin.top - yMap(d, i);
