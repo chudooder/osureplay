@@ -34,7 +34,7 @@
   <div ng-repeat="rp in replays">
     <div class="container replay-entry" ng-click="selectReplay(rp)">
       <div class="col-xs-5">
-        <h4>{{rp.beatmap.artist}} - {{rp.beatmap.title}} [{{rp.beatmap.version}}]</h4>
+        <h4>{{rp.beatmap.artist}} - {{rp.beatmap.title}} [{{rp.beatmap.version}}] {{modString(rp)}}</h4>
         <a target="_blank" ng-href="https://osu.ppy.sh/b/{{rp.beatmap.beatmap_id}}">
           <span style="font-size:1.5em;" title="Beatmap Page" class="glyphicon glyphicon-save-file"></span>
         </a>
@@ -47,6 +47,9 @@
           </div>
           <div class="row">
             CS: {{rp.beatmap.cs | number:1}}
+          </div>
+          <div class="row"> 
+            Stars: {{rp.beatmap.sd | number:2}}
           </div>
         </div>
         <div class="col-sm-6">

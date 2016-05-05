@@ -47,21 +47,21 @@ osuSearch.controller('SearchCtrl', [
 
             console.log(params);
 
-            $http.get("/api/search", {
+            $http.get('/api/search', {
                 params: params
             })
             .success(function(res) {
                 $scope.replays = res;
                 $scope.searched = true;
                 if($scope.replays.length == 0) {
-                    $scope.searchError = "No results; try another search."
+                    $scope.searchError = 'No results; try another search.'
                 } else {
                     $scope.searchError = null
                 }
                 searchService.setSearchResults(res);
             })
             .error(function(res){
-                $scope.searchError = "Some strange error occurred."
+                $scope.searchError = 'Some strange error occurred.'
             });
         };
 
@@ -85,11 +85,36 @@ osuSearch.controller('SearchCtrl', [
             return 100 * accuracy;
         };
 
+        $scope.modString = function(replay) {
+            var abbrev = {
+                'sudden_death': 'SD',
+                'perfect': 'PF',
+                'hard_rock': 'HR',
+                'nightcore': 'NC',
+                'double_time': 'DT',
+                'hidden': 'HD',
+                'flashlight': 'FL',
+                'no_fail': 'NF',
+                'easy': 'EZ'
+            }
+
+            var str = ''
+
+            for(var k in replay.mods) {
+                var enabled = replay.mods[k];
+                if(enabled) {
+                    if(str == '') str = '+';
+                    str += abbrev[k];
+                }
+            }
+            return str;
+        }
+
 
         $scope.formsEmpty = function() {
             for(input in $scope.inputs) {
                 var param = $scope.inputs[input];
-                if(param.value != "") {
+                if(param.value != '') {
                     return false;
                 }
             }
@@ -104,7 +129,7 @@ osuSearch.controller('SearchCtrl', [
 
 osuSearch.directive('onEnter', function() {
     return function(scope, element, attrs) {
-        element.bind("keydown keypress", function(event){
+        element.bind('keydown keypress', function(event){
             if(event.which === 13) {
                 scope.$apply(function (){
                     scope.$eval(attrs.onEnter);

@@ -13,7 +13,6 @@ var BeatmapSchema = new mongoose.Schema({
     beatmap_id: {
         type: Number,
         required: true,
-        unique: true,
         index: true
     },
     beatmap_set_id: Number,
@@ -41,7 +40,8 @@ var BeatmapSchema = new mongoose.Schema({
     cs: Number,
     ar: Number,
     hp: Number,
-    length: Number
+    length: Number,
+    sd: Number
 });
 
 var ReplaySchema = new mongoose.Schema({
