@@ -39,9 +39,9 @@ osuReplay.controller('ReplayCtrl', [
 var getTimingWindow = function(replay) {
     var od = replay.beatmap.od;
     var modOD = od;
-    if(replay.mods.ez)
+    if(replay.mods.easy)
         modOD = 0.5 * od;
-    else if(replay.mods.hd)
+    else if(replay.mods.hard_rock)
         modOD = Math.min(1.4 * od, 10);
 
     var w300 = 79.5 - 6.0 * modOD
