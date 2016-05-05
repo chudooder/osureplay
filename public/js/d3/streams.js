@@ -92,9 +92,9 @@ osuReplay.directive('streamsPlot', [
                 .attr('y', function(d, i) {
                     var height = yMap(d, i);
                     if(height > 0) {
-                        return centerY - height;
-                    } else {
                         return centerY;
+                    } else {
+                        return centerY + height;
                     }
                 })
                 .attr('width', barWidth)
@@ -130,9 +130,9 @@ osuReplay.directive('streamsPlot', [
                         .attr('y', function() {
                             var barVal = yMap(d, i);
                             if(barVal > 0) {
-                                return -yMap(d, i) + centerY - 10;
+                                return yMap(d, i) + centerY + 10;
                             } else {
-                                return -yMap(d, i) + centerY + 10;
+                                return yMap(d, i) + centerY - 10;
                             }
                         });
                 });
