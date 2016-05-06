@@ -7,14 +7,16 @@
     "doc": "docs"
   },
   "dependencies": {
-    "express": "4.13.3",
-    "multer": "1.1.0",
-    "mongoose": "4.4.13",
-    "path": "0.12.7",
-    "python-shell": "0.4.0",
-    "morgan": "1.7.0",
-    "bunyan": "1.8.1",
-    "multer-autoreap": "~0.1.0"
+    "bower": "^1.7.9",
+    "express": "^4.13.3",
+    "multer": "^1.1.0",
+    "mongoose": "^4.4.13",
+    "path": "^0.12.7",
+    "python-shell": "^0.4.0",
+    "morgan": "^1.7.0",
+    "bunyan": "^1.8.1",
+    "multer-autoreap": "~0.1.0",
+    "request": "^2.72.0"
   },
   "devDependencies": {},
   "scripts": {
