@@ -21,8 +21,7 @@ osuReplay.directive('hitmap', [
             return xScale(xValue(d, i));
         }
 
-        var yScale = d3.scale.linear()
-            .range([margin.top, margin.top + height]);
+        var yScale = d3.scale.linear();
         var yValue = function(d) { return d; }
         var yMap = function(d) { return yScale(yValue(d)); }
 
@@ -46,13 +45,15 @@ osuReplay.directive('hitmap', [
             var drawHeatmap = function(canvas) {
                 var max = d3.max(hitmap) / 1.0;
                 var context = canvas.node().getContext("2d");
-                var image = context.createImageData(width, height);
+                var imgWidth = dx;
+                var imgHeight = dy;
+                var image = context.createImageData(imgWidth, imgHeight);
                 var size = Math.sqrt(hitmap.length);
 
-                for (var y = 0, p = -1; y < height; ++y) {
-                    for (var x = 0; x < width; ++x) {
-                        var yp = Math.floor(y / height * dy);
-                        var xp = Math.floor(x / width * dx);
+                for (var y = 0, p = -1; y < imgHeight; ++y) {
+                    for (var x = 0; x < imgWidth; ++x) {
+                        var yp = Math.floor(y / imgHeight * dy);
+                        var xp = Math.floor(x / imgWidth * dx);
                         var c = d3.rgb(cScale(hitmap[yp*size+xp] / max));
                         image.data[++p] = c.r;
                         image.data[++p] = c.g;
@@ -67,12 +68,13 @@ osuReplay.directive('hitmap', [
             d3.select(elem).append('canvas')
                 .attr('x', margin.left)
                 .attr('y', margin.top)
-                .attr('width', width)
-                .attr('height', height)
+                .attr('width', dx)
+                .attr('height', dy)
                 .style('width', width + 'px')
                 .style('height', height + 'px')
                 .style('border-style', 'solid')
                 .style('border-width', '1px')
+                .style('image-rendering', 'pixelated')
                 .call(drawHeatmap);
 
 
@@ -96,22 +98,21 @@ osuReplay.directive('hitmap', [
         scope.$watch('val', update);
 
         var resize = function() {
-            // width = elem.clientWidth - margin.left - margin.right;
-            
-            // canvas.attr('width', width + margin.left + margin.right)
-            //     .attr('height', height + margin.top + margin.bottom);
+            width = elem.clientWidth - margin.left - margin.right;
+            height = width;
 
-            // xScale.range([margin.left, width + margin.left]);
+            xScale.range([margin.left, width + margin.left]);
+            yScale.range([margin.top, height + margin.top]);
         }
 
         // resize event
         angular.element($window).bind('resize', function() {
-            // resize();
+            resize();
             scope.$digest();
             update(scope.val, scope.val)
         });
 
-        // resize();
+        resize();
 
     };
 
