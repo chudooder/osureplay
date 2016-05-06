@@ -5,7 +5,7 @@
         <h1>{{replay.beatmap.title}}</h1>
     </div>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-12">
             <div class="plot-box">
                 Timeline
                 <timeline-plot class="plot-responsive" val="timeline"></timeline-plot>
@@ -21,9 +21,18 @@
         </div>
         <div class="col-md-6">
             <div class="plot-box">
-                Stream Timings
+                Average Stream Timings
                 <streams-plot class="plot-responsive" val="streams"></streams-plot>
             </div>
         </div>
-    </row>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="plot-box">
+                Heatmap
+                <hitmap class="plot-responsive" val="hitmap"></hitmap>
+            </div>
+        </div>
+    </div>
+
 </div>

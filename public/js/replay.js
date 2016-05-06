@@ -54,6 +54,16 @@ var getTimingWindow = function(replay) {
     }
 }
 
+var getCircleRadius = function(replay) {
+    var modCS = replay.beatmap.cs;
+    if(replay.mods.hard_rock) {
+        modCS -= 1;
+    } else if (replay.mods.easy) {
+        modCS += 1;
+    }
+    return (104.0 - modCS * 8.0) / 2.0;
+}
+
 var initScope = function(scope, replay) {
     scope.replay = replay;
     scope.timeline = {
@@ -68,5 +78,10 @@ var initScope = function(scope, replay) {
     scope.streams = {
         timingWindow: timingWindow,
         timings: replay.stream_timings
+    }
+    scope.hitmap = {
+        circleRadius: getCircleRadius(replay),
+        hitmapSize: replay.hitmap_size,
+        hitmap: replay.hitmap
     }
 };

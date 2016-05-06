@@ -66,6 +66,7 @@ body {
 
 /* replay details page */
 .plot-responsive {
+    position: relative;
     display: block;
     overflow: hidden;
     font-size: 12px;
