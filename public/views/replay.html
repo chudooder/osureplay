@@ -1,38 +1,84 @@
 <div class="container" ng-include="'views/header.html'"></div>
 <div class="container">
-    <div class="container-fluid">
-        <h2>{{error}}</h2>
-        <h1>{{replay.beatmap.title}}</h1>
+  <div class="container-fluid">
+    <h2>{{error}}</h2>
+    <h1>{{replay.beatmap.artist}} - {{replay.beatmap.title}} [{{replay.beatmap.version}}] {{modString(replay)}}</h1>
+    <small>Played by {{replay.player}}</small>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="plot-box">
+        Timeline
+        <timeline-plot class="plot-responsive" val="timeline"></timeline-plot>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="plot-box">
-                Timeline
-                <timeline-plot class="plot-responsive" val="timeline"></timeline-plot>
-            </div>
-        </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="plot-box">
+        Timing Distribution
+        <timing-plot class="plot-responsive" val="timings"></timing-plot>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="plot-box">
-                Timing Distribution
-                <timing-plot class="plot-responsive" val="timings"></timing-plot>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="plot-box">
-                Average Stream Timings
-                <streams-plot class="plot-responsive" val="streams"></streams-plot>
-            </div>
-        </div>
+    <div class="col-md-6">
+      <div class="plot-box">
+        Average Stream Timings
+        <streams-plot class="plot-responsive" val="streams"></streams-plot>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="plot-box">
-                Heatmap
-                <hitmap class="plot-responsive" val="hitmap"></hitmap>
-            </div>
-        </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="plot-box">
+        Heatmap
+        <hitmap class="plot-responsive" val="hitmap"></hitmap>
+        <small> Up is the direction from the previous hitcircle. </small>
+      </div>
     </div>
+    <div class="col-md-8">
+      <div class="plot-box">
+        General Statistics
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="row">
+                <a target="_blank" ng-href="http://osu.ppy.sh/u/{{rp.player}}">
+                  <span class="glyphicon glyphicon-user"></span>
+                  {{replay.player}}
+                </a>
+              </div>
+              <div class="row" title="Date">
+                <span class="glyphicon glyphicon-time"></span>
+                {{convertTime(replay.time_stamp)}}
+              </div>
+              <div class="row" title="Accuracy">
+                <span class="glyphicon glyphicon-screenshot"></span>
+                {{accuracy(replay) | number:2}}%
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="row" title="Total Score">
+                <span class="glyphicon glyphicon-signal"></span>
+                {{replay.score | number}}
+              </div>
+              <div class="row" title="Max Combo">
+                <span class="glyphicon glyphicon-music"></span>
+                {{replay.max_combo | number}}x
+              </div>
+              <div class="row" title="300/100/50 - Miss">
+                <span class="glyphicon glyphicon-ok"></span>
+                {{replay.num_300}} / {{replay.num_100}} / {{replay.num_50}}
+                <span class="glyphicon glyphicon-remove"></span>
+                {{replay.num_miss}}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            Unstable Rate: {{replay.unstable_rate | number:2}}
+          </div>
+        </div>
+      </div> <!-- plotbox -->
+    </div>
+  </div>
 
 </div>

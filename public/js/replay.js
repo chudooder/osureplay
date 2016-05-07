@@ -15,6 +15,7 @@ osuReplay.controller('ReplayCtrl', [
         $scope.replay = null;
         $scope.error = ""
 
+
         var replayData = replayService.getReplayData();
         if(replayData != null) {
             initScope($scope, replayData);
@@ -83,5 +84,50 @@ var initScope = function(scope, replay) {
         circleRadius: getCircleRadius(replay),
         hitmapSize: replay.hitmap_size,
         hitmap: replay.hitmap
+    }
+
+    scope.convertTime = function(unixTS) {
+        var a = new Date(unixTS * 1000);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var year = a.getFullYear();
+        var month = months[a.getMonth()];
+        var date = a.getDate();
+        var time = date + ' ' + month + ' ' + year
+        return time;
+    };
+
+    scope.accuracy = function(replay) {
+        var total = replay.num_300 + replay.num_100 
+            + replay.num_50 + replay.num_miss;
+        var weighted = replay.num_300 
+            + (1.0/3.0) * replay.num_100
+            + (1.0/6.0) * replay.num_50;
+        var accuracy = weighted / total;
+        return 100 * accuracy;
+    };
+
+    scope.modString = function(replay) {
+        var abbrev = {
+            'sudden_death': 'SD',
+            'perfect': 'PF',
+            'hard_rock': 'HR',
+            'nightcore': 'NC',
+            'double_time': 'DT',
+            'hidden': 'HD',
+            'flashlight': 'FL',
+            'no_fail': 'NF',
+            'easy': 'EZ'
+        }
+
+        var str = ''
+
+        for(var k in replay.mods) {
+            var enabled = replay.mods[k];
+            if(enabled) {
+                if(str == '') str = '+';
+                str += abbrev[k];
+            }
+        }
+        return str;
     }
 };

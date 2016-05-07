@@ -60,8 +60,13 @@ osuReplay.directive('timelinePlot', [
                 .attr('x', 0)
                 .attr('y', 0)
                 .attr('text-anchor', 'middle')
-                .style('fill', COLOR_GRAY)
-                .text('lmao');
+                .style('fill', COLOR_GRAY);
+
+            var timeTooltip = svg.append('text')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('text-anchor', 'middle')
+                .style('fill', COLOR_GRAY);
 
             // draw the base line
             var lineWidth = 10;
@@ -97,13 +102,18 @@ osuReplay.directive('timelinePlot', [
                 .on('mouseover', function(d) {
                     timingTooltip.style('visibility', 'visible')
                         .text(d.timing+' ms');
+                    timeTooltip.style('visibility', 'visible')
+                        .text(getTimeString(d.t));
                 })
                 .on('mouseout', function(d) {
                     timingTooltip.style('visibility', 'hidden');
+                    timeTooltip.style('visibility', 'hidden');
                 })
                 .on('mousemove', function(d) {
                     timingTooltip.attr('x', d3.select(this).attr('cx'))
                         .attr('y', lineY - 20);
+                    timeTooltip.attr('x', d3.select(this).attr('cx'))
+                        .attr('y', lineY + 30);
                 })
 
             svg.append('text')
