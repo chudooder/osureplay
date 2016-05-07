@@ -174,9 +174,9 @@ def in_window(obj, time, window):
 def circle_radius(cs, hd, ez):
     mod_cs = cs
     if hd:
-        mod_cs -= 1
-    elif ez:
         mod_cs += 1
+    elif ez:
+        mod_cs -= 1
     return (104.0 - mod_cs * 8.0) / 2.0
 
 def dist(p_input, obj, hr):
