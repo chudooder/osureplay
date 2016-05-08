@@ -44,9 +44,7 @@ osuSearch.controller('SearchCtrl', [
                 var param = $scope.inputs[input];
                 params[param.model] = param.value;
             }
-
-            console.log(params);
-
+            
             $http.get('/api/search', {
                 params: params
             })

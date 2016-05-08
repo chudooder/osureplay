@@ -48,6 +48,7 @@ var getTimingWindow = function(replay) {
     var w300 = 79.5 - 6.0 * modOD
     var w100 = 139.5 - 8.0 * modOD
     var w50 = 199.5 - 10.0 * modOD
+    console.log(w50);
     return {
         w300: w300,
         w100: w100,
@@ -58,9 +59,9 @@ var getTimingWindow = function(replay) {
 var getCircleRadius = function(replay) {
     var modCS = replay.beatmap.cs;
     if(replay.mods.hard_rock) {
-        modCS -= 1;
-    } else if (replay.mods.easy) {
         modCS += 1;
+    } else if (replay.mods.easy) {
+        modCS -= 1;
     }
     return (104.0 - modCS * 8.0) / 2.0;
 }
@@ -83,7 +84,8 @@ var initScope = function(scope, replay) {
     scope.hitmap = {
         circleRadius: getCircleRadius(replay),
         hitmapSize: replay.hitmap_size,
-        hitmap: replay.hitmap
+        hitmap: replay.hitmap,
+        events: replay.timeline
     }
 
     scope.convertTime = function(unixTS) {

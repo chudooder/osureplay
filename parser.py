@@ -171,6 +171,13 @@ def in_window(obj, time, window):
     return obj.time - window[2] <= time and \
         obj.time + window[2] >= time
 
+def pushed_buttons(prev_input, cur_input):
+    buttons = []
+    for k in ['K1', 'K2', 'M1', 'M2']:
+        if cur_input['keys'][k] and not prev_input['keys'][k]:
+            buttons.append(k)
+    return buttons
+
 def circle_radius(cs, hd, ez):
     mod_cs = cs
     if hd:
@@ -179,13 +186,9 @@ def circle_radius(cs, hd, ez):
         mod_cs -= 1
     return (104.0 - mod_cs * 8.0) / 2.0
 
-def dist(p_input, obj, hr):
-    if hr:
-        return math.sqrt(math.pow(p_input['x'] - obj.x, 2) + \
-            math.pow(p_input['y'] - (384 - obj.y), 2))
-    else:
-        return math.sqrt(math.pow(p_input['x'] - obj.x, 2) + \
-            math.pow(p_input['y'] - obj.y, 2))
+def dist(p_input, obj):
+    return math.sqrt(math.pow(p_input['x'] - obj.x, 2) + \
+        math.pow(p_input['y'] - obj.y, 2))
 
 def score_hit(time, obj, window):
     if obj.lenient and abs(time - obj.time) <= window[2]:
@@ -208,9 +211,9 @@ def transform_coords(cur_input, prev_obj, cur_obj):
     # get the rotation matrix
     a = math.cos(theta)
     b = math.sin(theta)
-    R = [[a, -b], [b, a]]
+    R = np.matrix([[a, -b], [b, a]])
     # apply the rotation matrix to the coordinates
-    coords = np.ravel(R * np.array([[dx], [dy]]))
+    coords = np.ravel(R * np.matrix([[dx], [dy]]))
     # remap to hitmap pixel coordinates
     coords += HITMAP_SIZE / 2
     # one last remapping to hitmap index
@@ -236,6 +239,7 @@ def simulate(objects, difficulty, replay):
         {'M1': False, 'M2': False, 'K1': False, 'K2': False}}
     prev_obj = None
     cur_obj = None
+    marked = False
 
     # stats variables
     timeline = []
@@ -247,6 +251,14 @@ def simulate(objects, difficulty, replay):
     stream_timings = []
     all_timings = []
 
+    extra_inputs = []
+    missed_notes = []
+
+    # first, reverse y axis if hr
+    if mods['hard_rock']:
+        for o in objects:
+            o.y = 384 - o.y
+
     for time in range(end_time):
         # check if input advances
         if len(inputs) > 0:
@@ -256,26 +268,18 @@ def simulate(objects, difficulty, replay):
                 cur_input = inputs.popleft()
 
                 # check if player pushed a button
-                if True in [cur_input['keys'][k] and \
-                    not prev_input['keys'][k] for k in ['M1', 'M2', 'K1', 'K2']]:
-
+                buttons = pushed_buttons(prev_input, cur_input)
+                if len(buttons) > 0:
                     # add the pressed key to stats
-                    for kk in ['M1', 'M2', 'K1', 'K2']:
-                        if cur_input['keys'][kk]:
-                            keys[kk] += 1
+                    for k in buttons:
+                        keys[k] += 1
 
                     # check if player hit current hitobject
-                    if cur_obj != None and dist(cur_input, cur_obj, mods['hard_rock']) < RADIUS:
+                    if cur_obj != None and dist(cur_input, cur_obj) < RADIUS:
                         # it's a hit!
                         score_val = score_hit(time, cur_obj, WINDOW)
                         time_diff = time - cur_obj.time
-                        # if the scoreval is 100 or 50, add it to the timeline
-                        if score_val == '100' or score_val == '50':
-                            timeline.append({           \
-                                    't': time,          \
-                                    'event': score_val, \
-                                    'timing': time_diff \
-                                })
+
                         # get the x and y hitmap coords
                         xi, yi = transform_coords(cur_input, prev_obj, cur_obj)
                         hitmap[yi][xi] += 1
@@ -297,19 +301,39 @@ def simulate(objects, difficulty, replay):
                         else:
                             stream_num = 0
 
+                        # if the scoreval is 100 or 50, add it to the timeline
+                        if score_val == '100' or score_val == '50':
+                            timeline.append({        \
+                                't': time,           \
+                                'event': score_val,  \
+                                'timing': time_diff, \
+                                'xi': xi,            \
+                                'yi': yi
+                            })
+
                         prev_obj = cur_obj
                         cur_obj = None
                         
                     else:
                         # wasted a click
-                        pass
+                        extra_inputs.append(cur_input)
+
+                        
 
         # hit object expires
         if cur_obj != None and time > cur_obj.time + WINDOW[2]:
-            timeline.append({       \
+            event = {               \
                 't': cur_obj.time,  \
                 'event': 'miss',    \
-                'timing': 0         \
+                'timing': 0,        \
+                'xi': -1,           \
+                'yi': -1            \
+            }
+            timeline.append(event)
+            missed_notes.append({
+                'prev': prev_obj,       \
+                'cur': cur_obj,         \
+                'event': event          \
             })
             prev_obj = cur_obj
             cur_obj = None
@@ -319,6 +343,24 @@ def simulate(objects, difficulty, replay):
             next_obj = objects[0]
             if cur_obj == None and in_window(next_obj, time, WINDOW):
                 cur_obj = objects.popleft()
+
+    # try to match up missed notes to nearest hit attempts
+    for note in missed_notes:
+        cur_obj = note['cur']
+        prev_obj = note['prev']
+        event = note['event']
+
+        for cur_input in extra_inputs:
+            if in_window(cur_obj, cur_input['time'], WINDOW):
+                # print('Paired (%d, %d) -> (%d, %d) with (%d, %d)' % (prev_obj.x, prev_obj.y, cur_obj.x, cur_obj.y, cur_input['x'], cur_input['y']))
+                # print('%d > %d' % (dist(cur_input, cur_obj), RADIUS))
+                xi, yi = transform_coords(cur_input, prev_obj, cur_obj)
+                # print('(%d, %d)' % (xi, yi))
+                time_diff = cur_input['time'] - cur_obj.time
+                event['timing'] = time_diff
+                event['xi'] = xi
+                event['yi'] = yi
+
 
     # done parsing! now to format the json
     # get streaming averages
@@ -330,11 +372,11 @@ def simulate(objects, difficulty, replay):
     result.pop('replay_data')
     result['timeline'] = timeline
     result['keys'] = dict(keys)
-    result['hitmap'] = np.ravel(hitmap).tolist()
+    result['hitmap'] = [int(i) for i in np.ravel(hitmap).tolist()]
     result['hitmap_resolution'] = HITMAP_RESOLUTION
     result['hitmap_size'] = HITMAP_SIZE
     result['circle_size'] = RADIUS
-    result['timings'] = timings.tolist()
+    result['timings'] = [int(i) for i in timings.tolist()]
     result['stream_timings'] = stream_avg
     result['unstable_rate'] = unstable_rate
 

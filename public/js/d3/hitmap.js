@@ -13,31 +13,46 @@ osuReplay.directive('hitmap', [
 
         var dx, dy;
 
+
+        var xValue = function(d, i) { return d.xi };
         var xScale = d3.scale.linear(); 
-        var xValue = function(d, i) {
-            return bucketWidth * i - timingWindow.w50;
-        }
         var xMap = function(d, i) {
             return xScale(xValue(d, i));
         }
 
+        var yValue = function(d) { return d.yi };
         var yScale = d3.scale.linear();
-        var yValue = function(d) { return d; }
-        var yMap = function(d) { return yScale(yValue(d)); }
+        var yMap = function(d) { 
+            return yScale(yValue(d)); 
+        }
 
         var cScale = d3.scale.linear()
             .domain([0, 0.2, 0.4, 0.6, 0.8, 1.0])
             .range(["#FFF", "#CDD169", "#59A442", "#24764D", "#0F3C49", "#000"]);
+
+        var eventCMap = function(d) {
+            var mapping = {
+                '100': COLOR_100,
+                '50': COLOR_50,
+                'miss': COLOR_MISS
+            };
+
+            return mapping[d.event];
+        }
 
         var update = function(newVal, oldVal) {
             if(!newVal) return;
 
             hitmap = newVal.hitmap;
             circleRadius = newVal.circleRadius;
+            events = newVal.events;
             hitmapSize = newVal.hitmapSize;
 
             dx = Math.sqrt(hitmap.length);
             dy = Math.sqrt(hitmap.length);
+
+            xScale.domain([0, dx]);
+            yScale.domain([0, dy]);
 
             // reset the plot
             d3.select(elem).selectAll('*').remove();
@@ -88,10 +103,28 @@ osuReplay.directive('hitmap', [
             svg.append('circle')
                 .attr('cx', width / 2)
                 .attr('cy', height / 2)
-                .attr('r', circleRadius / hitmapSize * width)
+                .attr('r', circleRadius * width / hitmapSize)
                 .style('fill', 'none')
                 .style('stroke', 'red')
                 .style('stroke-width', 1);
+
+            svg.selectAll('.dot')
+                .data(events)
+            .enter()
+            .append('circle')
+            .filter(function(d) { return d.xi != -1  && d.event == 'miss' })
+                .attr('cx', xMap)
+                .attr('cy', yMap)
+                .attr('r', 3)
+                .style('fill', eventCMap)
+            /* Some bugfixing code
+            .append('text')
+            .filter(function(d) { return d.xi != -1  && d.event == 'miss' })
+                .attr('x', xMap)
+                .attr('y', yMap)
+                .text(function(d) { return d.t })
+            */
+
 
 
         }
@@ -101,8 +134,8 @@ osuReplay.directive('hitmap', [
             width = elem.clientWidth - margin.left - margin.right;
             height = width;
 
-            xScale.range([margin.left, width + margin.left]);
-            yScale.range([margin.top, height + margin.top]);
+            xScale.range([0, width]);
+            yScale.range([0, height]);
         }
 
         // resize event

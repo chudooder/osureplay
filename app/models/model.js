@@ -5,7 +5,9 @@ var logger = require('../../config/logger');
 var TimelineEventSchema = new mongoose.Schema({
     t: Number,
     event: String,
-    timing: Number
+    timing: Number,
+    xi: Number,
+    yi: Number
 });
 
 var BeatmapSchema = new mongoose.Schema({

@@ -24,6 +24,10 @@ osuReplay.directive('timelinePlot', [
                 'miss': COLOR_MISS
             };
 
+            if(d.event == 'miss') {
+                console.log(d.t);
+            }
+
             return mapping[d.event];
         }
 
