@@ -108,6 +108,20 @@ osuReplay.directive('hitmap', [
                 .style('stroke', 'red')
                 .style('stroke-width', 1);
 
+            svg.append('line')
+                .attr('x1', width / 2)
+                .attr('y1', 0)
+                .attr('x2', width / 2)
+                .attr('y2', height)
+                .attr('class', 'hitmap-line');
+
+            svg.append('line')
+                .attr('x1', 0)
+                .attr('y1', height / 2)
+                .attr('x2', width)
+                .attr('y2', height / 2)
+                .attr('class', 'hitmap-line');
+
             svg.selectAll('.dot')
                 .data(events)
             .enter()

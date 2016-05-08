@@ -24,10 +24,6 @@ osuReplay.directive('timelinePlot', [
                 'miss': COLOR_MISS
             };
 
-            if(d.event == 'miss') {
-                console.log(d.t);
-            }
-
             return mapping[d.event];
         }
 
@@ -93,9 +89,10 @@ osuReplay.directive('timelinePlot', [
             // iterate over data and draw points on line
             
             var circleRadius = 5;
-            svg.selectAll('circle')
+            svg.selectAll('.dot')
                 .data(objects)
             .enter().append('circle')
+                .attr('class', 'dot')
                 .attr('cx', function(d) { return xMap(d) })
                 .attr('cy', lineY)
                 .attr('r', circleRadius)

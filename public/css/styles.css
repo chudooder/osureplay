@@ -73,9 +73,19 @@ body {
 }
 
 .keycount {
+    display: inline-block;
+    width: 40px;
     border-radius: 3px;
     border: 1px solid #aaa;
     font-size: 18px;
+    text-align: center;
+}
+
+.hitmap-line {
+    fill: none;
+    stroke: #AAA;
+    stroke-width: 1px;
+    opacity: 0.4;
 }
 
 .axis {
