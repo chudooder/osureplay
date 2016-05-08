@@ -40,7 +40,7 @@
         General Statistics
         <div class="container-fluid">
           <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
               <div class="row">
                 <a target="_blank" ng-href="http://osu.ppy.sh/u/{{rp.player}}">
                   <span class="glyphicon glyphicon-user"></span>
@@ -56,7 +56,7 @@
                 {{accuracy(replay) | number:2}}%
               </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
               <div class="row" title="Total Score">
                 <span class="glyphicon glyphicon-signal"></span>
                 {{replay.score | number}}
@@ -70,6 +70,20 @@
                 {{replay.num_300}} / {{replay.num_100}} / {{replay.num_50}}
                 <span class="glyphicon glyphicon-remove"></span>
                 {{replay.num_miss}}
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="row">
+                <span class="keycount"> K1 </span>: {{replay.keys.K1}}
+              </div>
+              <div class="row">
+                <span class="keycount"> K2 </span>: {{replay.keys.K2}}
+              </div>
+              <div class="row">
+                <span class="keycount"> M1 </span>: {{replay.keys.M1}}
+              </div>
+              <div class="row">
+                <span class="keycount"> M2 </span>: {{replay.keys.M2}}
               </div>
             </div>
           </div>

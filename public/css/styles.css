@@ -72,6 +72,12 @@ body {
     font-size: 12px;
 }
 
+.keycount {
+    border-radius: 3px;
+    border: 1px solid #aaa;
+    font-size: 18px;
+}
+
 .axis {
     font-size: 10px;
 }
