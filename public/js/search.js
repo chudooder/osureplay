@@ -33,8 +33,10 @@ osuSearch.controller('SearchCtrl', [
     '$window',
     '$location',
     '$anchorScroll',
+    'replayService',
     'searchService',
-    function($scope, $http, $window, $location, $anchorScroll, searchService) {
+    function($scope, $http, $window, $location, $
+        anchorScroll, replayService, searchService) {
         $scope.searchError = null;
         $scope.replays = searchService.getSearchResults();
         $scope.inputs = searchService.params;
@@ -125,6 +127,7 @@ osuSearch.controller('SearchCtrl', [
 
         $scope.selectReplay = function(replay) {
             // redirect to replay page
+            $replayService.setReplayData(null);
             $window.location.href = '/#/replay/'+replay.replay_md5;
         };
 
