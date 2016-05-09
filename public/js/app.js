@@ -15,6 +15,9 @@ osuApp.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'views/search.html',
             controller: 'SearchCtrl'
         })
+        .when('/about', {
+            templateUrl: 'views/about.html'
+        })
         .when('/replay/:hash', {
             templateUrl: 'views/replay.html',
             controller: 'ReplayCtrl'

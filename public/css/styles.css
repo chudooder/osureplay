@@ -22,6 +22,11 @@ body {
     height: 64px;
 }
 
+.processing img {
+    width: 24px;
+    height: 24px;
+}
+
 .btn-parse,
 .btn-file {
     position: relative;
@@ -43,6 +48,17 @@ body {
     background: white;
     cursor: inherit;
     display: block;
+}
+
+/* About page */
+.avatar {
+    border-radius: 7px;
+    margin: 10px;
+}
+
+.about {
+    text-align: justify;
+    margin-bottom: 20px;
 }
 
 /* Search page divs */
