@@ -15,7 +15,6 @@ osuReplay.controller('ReplayCtrl', [
         $scope.replay = null;
         $scope.error = ""
 
-
         var replayData = replayService.getReplayData();
         if(replayData != null) {
             initScope($scope, replayData);
