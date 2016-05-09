@@ -156,7 +156,11 @@ osuReplay.directive('hitmap', [
         angular.element($window).bind('resize', function() {
             resize();
             scope.$digest();
-            update(scope.val, scope.val)
+            // sometimes the width goes negative temporarily
+            // for some reason.
+            if(width > 0) {
+                update(scope.val, scope.val);
+            }
         });
 
         resize();
