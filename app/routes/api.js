@@ -19,8 +19,8 @@ var upload = multer({
 var verifyCaptcha = function(key, callback) {
 
     // DEV DEV DEV DEV DEV
-    callback(true);
-    return;
+    // callback(true);
+    // return;
     // DEV DEV DEV DEV DEV
 
     request({
