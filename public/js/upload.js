@@ -32,39 +32,50 @@ osuUpload.controller('UploadCtrl', [
     '$window',
     'replayService',
     function($scope, $http, $window, replayService) {
-        $scope.test = 'Hello fam';
+        $scope.error = '';
+        $scope.processing = false;
         $scope.fileName = 'Browse...';
 
         $scope.updateFileText = function() {
             var file = $scope.selectedFile;
             $scope.fileName = file.name;
-            $scope.test = 'Nice job mate';
             $scope.$apply();
         }
 
         $scope.uploadFile = function() {
+            if($scope.canUpload()) return;
+
             // send a post request with the uploaded data
             var fd = new FormData();
             var file = $scope.selectedFile;
             var captcha = $scope.captchaResponse;
             fd.append('userReplay', file);
             fd.append('g-recaptcha-response', captcha);
+            $scope.processing = true;
             $http.post("/api/upload", fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             })
             .success(function(response) {
                 if(response.error) {    // error in parsing
-                    $scope.test = "Something went wrong!";
+                    $scope.error = response.error;
                 } else {                // parsing successful
                     replayService.setReplayData(response);
                     $window.location.href = '/#/replay/'
                         +response.replay_md5
                 }
+                $scope.processing = false;
             })
             .error(function(response) {
-                $scope.test = "whoops";
+                $scope.error = "Something went horribly wrong."
+                $scope.processing = false;
             });
         };
+
+        $scope.canUpload = function() {
+            if($scope.fileName != 'Browse...')
+                return false;
+            return true;
+        }
 
     }]);

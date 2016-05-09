@@ -31,7 +31,7 @@
     {{searchError}}
   </div>
 
-  <div ng-repeat="rp in replays">
+  <div id="results" ng-repeat="rp in replays">
     <div class="container replay-entry" ng-click="selectReplay(rp)">
       <div class="col-xs-5">
         <h4>{{rp.beatmap.artist}} - {{rp.beatmap.title}} [{{rp.beatmap.version}}] {{modString(rp)}}</h4>

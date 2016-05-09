@@ -3,7 +3,10 @@
   <div class="container-fluid">
     <h2>{{error}}</h2>
     <h1>{{replay.beatmap.artist}} - {{replay.beatmap.title}} [{{replay.beatmap.version}}] {{modString(replay)}}</h1>
-    <small>Played by {{replay.player}}</small>
+    <a target="_blank" ng-href="https://osu.ppy.sh/b/{{replay.beatmap.beatmap_id}}">
+      <span style="font-size:1.5em;" title="Beatmap Page" class="glyphicon glyphicon-save-file"></span>
+    </a>
+    <span>Played by {{replay.player}}</span>
   </div>
   <div class="row">
     <div class="col-md-12">

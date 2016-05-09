@@ -31,8 +31,10 @@ osuSearch.controller('SearchCtrl', [
     '$scope', 
     '$http', 
     '$window',
+    '$location',
+    '$anchorScroll',
     'searchService',
-    function($scope, $http, $window, searchService) {
+    function($scope, $http, $window, $location, $anchorScroll, searchService) {
         $scope.searchError = null;
         $scope.replays = searchService.getSearchResults();
         $scope.inputs = searchService.params;
@@ -57,10 +59,12 @@ osuSearch.controller('SearchCtrl', [
                     $scope.searchError = null
                 }
                 searchService.setSearchResults(res);
+                $scope.scrollToReplays();
             })
             .error(function(res){
                 $scope.searchError = 'Some strange error occurred.'
             });
+
         };
 
         $scope.convertTime = function(unixTS) {
@@ -123,6 +127,11 @@ osuSearch.controller('SearchCtrl', [
             // redirect to replay page
             $window.location.href = '/#/replay/'+replay.replay_md5;
         };
+
+        $scope.scrollToReplays = function() {
+            $location.hash('results');
+            $anchorScroll();
+        }
     }]);
 
 osuSearch.directive('onEnter', function() {

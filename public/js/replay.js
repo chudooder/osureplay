@@ -48,7 +48,6 @@ var getTimingWindow = function(replay) {
     var w300 = 79.5 - 6.0 * modOD
     var w100 = 139.5 - 8.0 * modOD
     var w50 = 199.5 - 10.0 * modOD
-    console.log(w50);
     return {
         w300: w300,
         w100: w100,

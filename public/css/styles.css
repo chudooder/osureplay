@@ -4,19 +4,39 @@ body {
     font-family: 'Lato';
 }
 
+.upload {
+    text-align: center;
+}
+
+.instructions {
+    text-align: center;
+}
+
+.instructions img {
+    border: 1px solid #aaa;
+}
+
+.processing {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 64px;
+}
+
+.btn-parse,
 .btn-file {
     position: relative;
     overflow: hidden;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
+/* Hides the default file browse button */
 .btn-file input[type=file] {
     position: absolute;
     top: 0;
     right: 0;
     min-width: 100%;
     min-height: 100%;
-    font-size: 100px;
-    text-align: right;
     filter: alpha(opacity=0);
     opacity: 0;
     outline: none;
