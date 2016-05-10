@@ -7,6 +7,9 @@ var osuApp = angular.module('osuApp', [
 
 osuApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider
+        .when('/', {
+            templateUrl: 'views/main.html'
+        })
         .when('/upload', {
             templateUrl: 'views/upload.html',
             controller: 'UploadCtrl'

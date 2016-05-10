@@ -1,8 +1,18 @@
 body {
     /* Required for Bootstrap header */
-    padding-top: 70px;
+    padding-top: 50px;
     font-family: 'Lato';
 }
+
+/* Main page */
+#jumbo {
+    background-image: url(../img/splash.png);
+    background-size: cover;
+    color: #fff;
+    height: 500px;
+}
+
+/* Upload page */
 
 .upload {
     text-align: center;
