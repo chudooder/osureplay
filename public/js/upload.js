@@ -32,7 +32,7 @@ osuUpload.controller('UploadCtrl', [
     '$window',
     'replayService',
     function($scope, $http, $window, replayService) {
-        $scope.error = '';
+        $scope.error = 'Please select an .osr file. Currently, only osu!standard is supported.';
         $scope.processing = false;
         $scope.fileName = 'Browse...';
 
