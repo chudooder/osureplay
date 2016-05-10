@@ -73,8 +73,13 @@ module.exports = function(app) {
             queryParams['player_lower'] = request.player.toLowerCase();
         if(request.title)
             queryParams['beatmap.title_lower'] = request.title.toLowerCase();
-        if(request.beatmap_id)
+        if(request.beatmap_id) {
+            if(!Number(request.beatmap_id)) {
+                res.json([]);
+                return;
+            }
             queryParams['beatmap.beatmap_id'] = request.beatmap_id;
+        }
         if(request.creator)
             queryParams['beatmap.creator_lower'] = request.creator.toLowerCase();
         if(request.artist)
