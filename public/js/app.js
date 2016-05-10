@@ -32,6 +32,10 @@ osuApp.config(['$routeProvider', function($routeProvider) {
         });
 }]);
 
+osuApp.config(['$compileProvider', function ($compileProvider) {
+  $compileProvider.debugInfoEnabled(false);
+}]);
+
 osuApp.service('replayService', function() {
     var replayData;
 
