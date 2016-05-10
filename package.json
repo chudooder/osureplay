@@ -16,7 +16,8 @@
     "morgan": "^1.7.0",
     "bunyan": "^1.8.1",
     "multer-autoreap": "~0.1.0",
-    "request": "^2.72.0"
+    "request": "^2.72.0",
+    "fs": "0.0.2"
   },
   "devDependencies": {},
   "scripts": {

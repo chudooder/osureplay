@@ -3,7 +3,8 @@ var express = require('express');
 var multer = require('multer');
 var autoReap = require('multer-autoreap')
 var path = require('path');
-var logger = require('morgan');
+var morgan = require('morgan');
+var fs = require('fs');
 
 autoReap.options = {
     reapOnError: true
@@ -13,7 +14,12 @@ var app = express();
 
 // configure app
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(logger('dev'));
+
+// create a write stream (in append mode)
+var accessLogStream = fs.createWriteStream(__dirname + '/access.log', {flags: 'a'})
+
+// setup the logger
+app.use(morgan('combined', {stream: accessLogStream}))
 app.use(autoReap);
 
 // models

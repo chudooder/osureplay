@@ -4,6 +4,7 @@ var multer = require('multer');
 var request = require('request');
 var Replay = mongoose.model('Replay');
 var Beatmap = mongoose.model('Beatmap');
+var logger = require('../../config/logger');
 
 // define multer stuff
 var storage = multer.diskStorage({
@@ -104,7 +105,7 @@ module.exports = function(app) {
                 res.json({'error': 'No file selected.'});
             } else {
                 Replay.parseReplay(req.file.path, function(replay) {
-                    if(replay.error) res.json(replay);
+                    if(replay) res.json(replay);
                     else {
                         res.json({'error': 'Invalid replay file.'});
                     }
