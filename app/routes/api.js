@@ -89,7 +89,7 @@ module.exports = function(app) {
             .sort({'time_stamp': -1})
             .limit(20)
             .exec(function(err, replays) {
-                if(err) { return next(error) };
+                if(err) { return next(err) };
                 res.json(replays);
             });
 
