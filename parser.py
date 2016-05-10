@@ -59,11 +59,11 @@ def parse_object(line):
 
     objtype = int(params[3])
     # hit circle
-    if objtype in [1, 5]:
+    if (objtype & 1) != 0:
         return HitObject(x, y, time, False)
 
-    # TODO: deal with sliders
-    elif objtype in [2, 6]:
+    # sliders
+    elif (objtype & 2) != 0:
         return HitObject(x, y, time, True)
 
     # ignore spinners
@@ -232,6 +232,10 @@ def simulate(objects, difficulty, replay):
     end_time = max([objects[-1].time, replay_data[-1]['time']])
     difficulty['length'] = objects[-1].time
 
+    # for o in replay_data:
+    #     if o['time'] > 10000 and o['time'] < 11000:
+    #         print(o)
+
     # iteration variables
     inputs = deque(replay_data)
     objects = deque(objects)
@@ -279,6 +283,9 @@ def simulate(objects, difficulty, replay):
                         # it's a hit!
                         score_val = score_hit(time, cur_obj, WINDOW)
                         time_diff = time - cur_obj.time
+
+                        # if cur_obj.time > 10000 and cur_obj.time < 11000:
+                        #     print('%d - %d' % (cur_input['time'], cur_obj.time))
 
                         # get the x and y hitmap coords
                         xi, yi = transform_coords(cur_input, prev_obj, cur_obj)
