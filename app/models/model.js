@@ -138,6 +138,11 @@ ReplaySchema.statics.parseReplay = function(pathToFile, cb) {
 
         var js = JSON.parse(results[0]);
 
+        if(js.error) {
+            cb(js);
+            return;
+        }
+
         new Replay(js).save(function(error){
             // duplicate key error
             if(error) {

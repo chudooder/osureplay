@@ -104,7 +104,7 @@ module.exports = function(app) {
                 res.json({'error': 'No file selected.'});
             } else {
                 Replay.parseReplay(req.file.path, function(replay) {
-                    if(replay) res.json(replay);
+                    if(replay.error) res.json(replay);
                     else {
                         res.json({'error': 'Invalid replay file.'});
                     }

@@ -433,6 +433,10 @@ if __name__ == '__main__':
     rp_file = sys.argv[1]
     replay = parseReplay(open(rp_file, 'rb').read())
 
+    if replay['mode'] != 0:
+        print(json.dumps({'error': 'Unsupported game mode.'}))
+        sys.exit(0)
+
     # attempt to locate beatmap file in /data
     bm_hash = replay['beatmap_md5']
     bm_path = 'data/' + bm_hash + '.osu'
