@@ -1,5 +1,6 @@
 var osuApp = angular.module('osuApp', [
     'ngRoute',
+    'osuMain',
     'osuUpload',
     'osuSearch',
     'osuReplay'
@@ -8,7 +9,8 @@ var osuApp = angular.module('osuApp', [
 osuApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider
         .when('/', {
-            templateUrl: 'views/main.html'
+            templateUrl: 'views/main.html',
+            controller: 'MainCtrl'
         })
         .when('/upload', {
             templateUrl: 'views/upload.html',
