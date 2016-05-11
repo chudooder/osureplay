@@ -119,7 +119,7 @@ def parse_osu(osu):
                 continue
 
             args = line.split(',')
-            time = int(args[0])
+            time = float(args[0])
             mpb = float(args[1])
             if mpb > 0:
                 pt = TimingPoint(time, mpb)
@@ -233,7 +233,7 @@ def simulate(objects, difficulty, replay):
     difficulty['length'] = objects[-1].time
 
     # for o in replay_data:
-    #     if o['time'] > 10000 and o['time'] < 11000:
+    #     if o['time'] > 49500 and o['time'] < 49700:
     #         print(o)
 
     # iteration variables
@@ -359,8 +359,8 @@ def simulate(objects, difficulty, replay):
 
         for cur_input in extra_inputs:
             if in_window(cur_obj, cur_input['time'], WINDOW):
-                # print('Paired (%d, %d) -> (%d, %d) with (%d, %d)' % (prev_obj.x, prev_obj.y, cur_obj.x, cur_obj.y, cur_input['x'], cur_input['y']))
-                # print('%d > %d' % (dist(cur_input, cur_obj), RADIUS))
+                # print('Paired (%f, %f) -> (%d, %f, %f) with (%d, %f, %f)' % (prev_obj.x, prev_obj.y, cur_obj.time, cur_obj.x, cur_obj.y, cur_input['time'], cur_input['x'], cur_input['y']))
+                # print('%f > %f' % (dist(cur_input, cur_obj), RADIUS))
                 xi, yi = transform_coords(cur_input, prev_obj, cur_obj)
                 # print('(%d, %d)' % (xi, yi))
                 time_diff = cur_input['time'] - cur_obj.time
