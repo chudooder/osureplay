@@ -148,8 +148,8 @@ ReplaySchema.statics.parseReplay = function(pathToFile, cb) {
             if(error) {
                 if(error.code == 11000) {
                     logger.info('Duplicate key: ' + js.replay_md5)
-                    Replay.findOne({'replay_md5': js.replay_md5}, function(err, replay) {
-                        cb(replay);
+                    Replay.findOneAndUpdate({'replay_md5': js.replay_md5}, js, {upsert:true}, function(err, replay) {
+                        cb(js);
                     });
                 } else {
                     logger.info(error)
