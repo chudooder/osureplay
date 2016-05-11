@@ -292,10 +292,10 @@ def simulate(objects, difficulty, replay):
                         hitmap[yi][xi] += 1
 
                         # get the timing bucket
-                        
                         bucket = int(time_diff / (WINDOW[2] * 2) * \
                             TIMING_RESOLUTION) + int(TIMING_RESOLUTION / 2)
-                        timings[bucket] += 1
+                        if bucket >= 0 and bucket < len(timings):
+                            timings[bucket] += 1
 
                         all_timings.append(time_diff)
 
