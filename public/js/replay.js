@@ -57,9 +57,9 @@ var getTimingWindow = function(replay) {
 var getCircleRadius = function(replay) {
     var modCS = replay.beatmap.cs;
     if(replay.mods.hard_rock) {
-        modCS += 1;
+        modCS *= 1.3;
     } else if (replay.mods.easy) {
-        modCS -= 1;
+        modCS /= 2;
     }
     return (104.0 - modCS * 8.0) / 2.0;
 }
