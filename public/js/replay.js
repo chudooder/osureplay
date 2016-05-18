@@ -116,7 +116,11 @@ var initScope = function(scope, replay) {
             'hidden': 'HD',
             'flashlight': 'FL',
             'no_fail': 'NF',
-            'easy': 'EZ'
+            'easy': 'EZ',
+            'half_time': 'HT',
+            'spun_out': 'SO',
+            'relax': 'RL',
+            'auto_pilot': 'AP'
         }
 
         var str = ''
