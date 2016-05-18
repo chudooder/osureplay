@@ -89,6 +89,35 @@ osuSearch.controller('SearchCtrl', [
             return 100 * accuracy;
         };
 
+        $scope.rank = function(replay) {
+            var total = replay.num_300 + replay.num_100 
+                + replay.num_50 + replay.num_miss;
+            var weighted = replay.num_300 
+                + (1.0/3.0) * replay.num_100
+                + (1.0/6.0) * replay.num_50;
+            var accuracy = weighted / total;
+
+            if(accuracy == 1.0) {
+                return 'SS';
+            } else if(replay.num_miss == 0 &&
+                replay.num_300 / total > 0.9 &&
+                replay.num_50 / total < 0.01) {
+                return 'S';
+            } else if(replay.num_300 / total > 0.8 &&
+                replay.num_miss == 0 ||
+                replay.num_300 / total > 0.9) {
+                return 'A';
+            } else if(replay.num_300 / total > 0.7 &&
+                replay.num_miss == 0 ||
+                replay.num_300 / total > 0.8) {
+                return 'B';
+            } else if(replay.num_300 / total > 0.6) {
+                return 'C';
+            } else {
+                return 'D';
+            }
+        }
+
         $scope.modString = function(replay) {
             var abbrev = {
                 'sudden_death': 'SD',
