@@ -45,6 +45,7 @@ osuReplay.directive('hitmap', [
 
             hitmap = newVal.hitmap;
             circleRadius = newVal.circleRadius;
+            normalRadius = newVal.normalRadius;
             events = newVal.events;
             hitmapSize = newVal.hitmapSize;
 
@@ -107,6 +108,17 @@ osuReplay.directive('hitmap', [
                 .style('fill', 'none')
                 .style('stroke', 'red')
                 .style('stroke-width', 1);
+
+            if(circleRadius != normalRadius) {
+                svg.append('circle')
+                    .attr('cx', width / 2)
+                    .attr('cy', height / 2)
+                    .attr('r', normalRadius * width / hitmapSize)
+                    .style('fill', 'none')
+                    .style('stroke', 'red')
+                    .style('opacity', 0.4)
+                    .style('stroke-dasharray', '5,5');
+            }
 
             svg.append('line')
                 .attr('x1', width / 2)

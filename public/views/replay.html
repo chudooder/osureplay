@@ -13,6 +13,7 @@
       <div class="plot-box">
         Timeline
         <timeline-plot class="plot-responsive" val="timeline"></timeline-plot>
+        <small> The timeline of the replay. 100s are marked green, 50s are marked orange, and misses are marked red. </small>
       </div>
     </div>
   </div>
@@ -21,12 +22,14 @@
       <div class="plot-box">
         Timing Distribution
         <timing-plot class="plot-responsive" val="timings"></timing-plot>
+        <small> The timing distribution of all successful hits. (&plusmn;{{timingWindow.w300}}ms | &plusmn;{{timingWindow.w100}}ms | &plusmn;{{timingWindow.w50}}ms) </small>
       </div>
     </div>
     <div class="col-md-6">
       <div class="plot-box">
         Average Stream Timings
         <streams-plot class="plot-responsive" val="streams"></streams-plot>
+        <small> The average timing for each sequential note over all streams in the map. </small>
       </div>
     </div>
   </div>
