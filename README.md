@@ -9,8 +9,10 @@ git clone git@github.com:chudooder/osureplay.git
 mkdir oppai
 cd oppai
 git clone https://github.com/Francesco149/oppai.git
+cd oppai
+make
 
-cd ..
+cd ../..
 npm install
 cd public
 bower install
