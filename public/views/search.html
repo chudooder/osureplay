@@ -1,4 +1,4 @@
-<div class="container" ng-include="'views/header.html'"></div>
+<div ng-include="'views/header.html'"></div>
 
 <div class="container-fluid">
   <div id="search-params">
@@ -68,6 +68,9 @@
           <div class="col-sm-4">
             <div class="rank">
               {{rank(rp)}}
+            </div>
+            <div class="pp" ng-if="rp.pp != -1">
+              {{rp.pp}}pp
             </div>
           </div>
           <div class="col-sm-4">

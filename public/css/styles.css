@@ -1,7 +1,11 @@
 body {
-    /* Required for Bootstrap header */
-    padding-top: 50px;
     font-family: 'Lato';
+}
+
+.notice {
+    text-align: center;
+    color: #FFF;
+    background-color: #E37820;
 }
 
 /* Main page */
@@ -102,7 +106,11 @@ body {
 
 .rank {
     text-align: center;
-    font-size: 32px;
+    font-size: 24px;
+}
+
+.pp {
+    text-align: center;
 }
 
 /* replay details page */

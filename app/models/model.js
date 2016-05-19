@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var pyshell = require('python-shell');
+var child_process = require('child_process');
 var logger = require('../../config/logger');
 
 var TimelineEventSchema = new mongoose.Schema({
@@ -119,8 +120,42 @@ var ReplaySchema = new mongoose.Schema({
     hitmap: [Number],
     timings: [Number],
     stream_timings: [Number],
-    unstable_rate: Number
+    unstable_rate: Number,
+    pp: Number
 });
+
+var modString = function(replay) {
+    var abbrev = {
+        'sudden_death': 'SD',
+        'perfect': 'PF',
+        'hard_rock': 'HR',
+        'nightcore': 'NC',
+        'double_time': 'DT',
+        'hidden': 'HD',
+        'flashlight': 'FL',
+        'no_fail': 'NF',
+        'easy': 'EZ',
+        'half_time': 'HT',
+        'spun_out': 'SO',
+        'relax': 'RL',
+        'auto_pilot': 'AP'
+    }
+
+    var str = ''
+
+    for(var k in replay.mods) {
+        var enabled = replay.mods[k];
+        if(enabled) {
+            if(str == '') str = '+';
+            str += abbrev[k];
+        }
+    }
+
+    if(str == '') {
+        return '+nomod';
+    }
+    return str;
+}
 
 ReplaySchema.statics.parseReplay = function(pathToFile, cb) {
     options = {
@@ -143,21 +178,38 @@ ReplaySchema.statics.parseReplay = function(pathToFile, cb) {
             return;
         }
 
-        new Replay(js).save(function(error){
-            // duplicate key error
-            if(error) {
-                if(error.code == 11000) {
-                    logger.info('Duplicate key: ' + js.replay_md5)
-                    Replay.findOneAndUpdate({'replay_md5': js.replay_md5}, js, {upsert:true}, function(err, replay) {
-                        cb(js);
-                    });
-                } else {
-                    logger.info(error)
+        // run oppai for the pp calculation
+        js.pp = -1;
+        var bmFile = js.beatmap.beatmap_hash + '.osu';
+        var params = [
+            'data/' + bmFile,
+            js.num_100 + 'x100',
+            js.num_50 + 'x50',
+            modString(js),
+            js.max_combo + 'x'
+        ]
+        var oppai = child_process.spawn('./oppai/oppai/oppai', params);
+
+        oppai.stdout.on('data', function(data) {
+            var output = data.toString('utf8');
+            var re = /[0-9\.]pp/;
+            var lines = output.split('\n');
+            for(var i=0; i<lines.length; i++) {
+                if(re.exec(lines[i])) {
+                    var pp = Number(lines[i].slice(0, -2));
+                    js.pp = pp;
                 }
-            } else {
-                logger.info('Saved replay ' + js.replay_md5);
-                cb(js);
             }
+
+            // save the replay and update if necessary
+            Replay.findOneAndUpdate(
+                {'replay_md5': js.replay_md5}, 
+                js, 
+                {upsert:true}, 
+                function(err, replay) {
+                    logger.info('Saved replay ' + js.replay_md5);
+                    cb(js);
+                });
         });
     });
 };

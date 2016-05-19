@@ -416,12 +416,13 @@ def get_beatmap_id(bm_hash):
     key = open('apikey').read().strip()
     url = apiurl + 'k=' + key + '&h=' + bm_hash
 
-    response = urllib.request.urlopen(url)
+    try:
+        response = urllib.request.urlopen(url)
+    except urllib.error.URLError:
+        return None
+
     res = str(response.read(), 'utf-8')
     jsonRes = json.loads(res)
-
-    if len(jsonRes) == 0:
-        return None
 
     res = jsonRes[0]
 
@@ -449,7 +450,12 @@ if __name__ == '__main__':
     bm_path = 'data/' + bm_hash + '.osu'
     bm_file = None
 
-    bm_id, bm_set_id, sd = get_beatmap_id(bm_hash)
+    bm_tuple = get_beatmap_id(bm_hash)
+    if bm_tuple == None:
+        print(json.dumps({'error': 'Could not access the osu! api at this time. Please try again in a bit.'}))
+        sys.exit(0);
+
+    bm_id, bm_set_id, sd = bm_tuple
     if os.path.isfile(bm_path):
         bm_file = open(bm_path)
     else:
@@ -467,6 +473,7 @@ if __name__ == '__main__':
 
     beatmap['beatmap_id'] = bm_id
     beatmap['beatmap_set_id'] = bm_set_id
+    beatmap['beatmap_hash'] = bm_hash
     beatmap['sd'] = sd
 
     results = simulate(objects, beatmap, replay)

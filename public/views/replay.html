@@ -1,4 +1,4 @@
-<div class="container" ng-include="'views/header.html'"></div>
+<div ng-include="'views/header.html'"></div>
 <div class="container">
   <div class="container-fluid">
     <h2>{{error}}</h2>
@@ -88,6 +88,9 @@
                 {{replay.num_300}} / {{replay.num_100}} / {{replay.num_50}}
                 <span class="glyphicon glyphicon-remove"></span>
                 {{replay.num_miss}}
+              </div>
+              <div class="row">
+                <strong>PP:</strong> {{replay.pp}}
               </div>
               <div class="row">
                 <strong>Geki:</strong> {{replay.num_geki}}

@@ -20,8 +20,8 @@ var upload = multer({
 var verifyCaptcha = function(key, callback) {
 
     // DEV DEV DEV DEV DEV
-    // callback(true);
-    // return;
+    callback(true);
+    return;
     // DEV DEV DEV DEV DEV
 
     request({
@@ -90,7 +90,7 @@ module.exports = function(app) {
         Replay.find(queryParams)
             .select('replay_md5 beatmap player mode num_300 '+
                 'num_100 num_50 num_geki num_katu num_miss score '+
-                'max_combo mods time_stamp')
+                'max_combo mods time_stamp pp')
             .sort({'time_stamp': -1})
             .limit(20)
             .exec(function(err, replays) {
