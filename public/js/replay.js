@@ -129,7 +129,7 @@ var initScope = function(scope, replay) {
 
         var str = ''
 
-        for(var k in replay.mods) {
+        for(var k in abbrev) {
             var enabled = replay.mods[k];
             if(enabled) {
                 if(str == '') str = '+';

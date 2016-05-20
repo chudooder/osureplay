@@ -386,8 +386,6 @@ def simulate(objects, difficulty, replay):
     result['timings'] = [int(i) for i in timings.tolist()]
     result['stream_timings'] = stream_avg
     result['unstable_rate'] = unstable_rate
-
-    difficulty['beatmap_md5'] = replay['beatmap_md5']
     result['beatmap'] = difficulty
 
     return result
@@ -473,7 +471,7 @@ if __name__ == '__main__':
 
     beatmap['beatmap_id'] = bm_id
     beatmap['beatmap_set_id'] = bm_set_id
-    beatmap['beatmap_hash'] = bm_hash
+    beatmap['beatmap_md5'] = bm_hash
     beatmap['sd'] = sd
 
     results = simulate(objects, beatmap, replay)
